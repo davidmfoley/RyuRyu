@@ -15,7 +15,6 @@ describe "Getting solutions for a region" do
 	end
 
 	describe "2x1 region" do
-
 		before do
 			@region = Region.new [[1, 1], [1, 2]], 2
 		end
@@ -31,19 +30,19 @@ describe "Getting solutions for a region" do
 
 	describe "L-shaped 3 square region" do
 		before do
-			@region = Region.new [[1, 1], [1, 2], [2,1]]
+			@region = Region.new [[1, 1], [1, 2], [2, 1]]
 		end
 		it "should solve for board size 2" do
-			@solver.solve(@region, 2).sort.should == [[1,2,2], [2,1,1]]
+			@solver.solve(@region, 2).sort.should == [[1, 2, 2], [2, 1, 1]]
 		end
 	end
 
 	describe "Box-shaped 4 square region" do
 		before do
-			@region = Region.new [[1, 1], [1, 2], [2,1], [2,2]]
+			@region = Region.new [[1, 1], [1, 2], [2, 1], [2, 2]]
 		end
 		it "should solve for board size 2" do
-			@solver.solve(@region, 2).sort.should == [[1,2,2,1], [2,1,1,2]]
+			@solver.solve(@region, 2).sort.should == [[1, 2, 2, 1], [2, 1, 1, 2]]
 		end
 	end
 
@@ -54,6 +53,104 @@ describe "Getting solutions for a region" do
 				[1, 2, 3], [1, 3, 2],
 				[2, 1, 3], [2, 3, 1],
 				[3, 1, 2], [3, 2, 1]]
+		end
+	end
+
+	describe "with addition" do
+		describe "2x1 with sum of 3" do
+			before do
+				@region = Region.new [[1, 1], [1, 2]], 3, "+"
+			end
+
+			for size in 1..3 do
+				it "should solve for a board size of #{size}" do
+					@solver.solve(@region, size).sort.should == [
+						[1, 2], [2, 1]
+					]
+				end
+			end
+		end
+
+		describe "3x1 with sum of 7" do
+			before do
+				@region = Region.new [[1, 1], [1, 2], [1, 3]], 7, "+"
+			end
+
+			for size in 4..6 do
+				it "should solve for a board size of #{size}" do
+					@solver.solve(@region, size).sort.should == [
+						[1, 2, 4], [1, 4, 2],
+						[2, 1, 4], [2, 4, 1],
+						[4, 1, 2], [4, 2, 1]
+					]
+				end
+			end
+		end
+	end
+
+	describe "with multiplication" do
+		describe "2x1 with product of 6" do
+			before do
+				@region = Region.new [[1, 1], [1, 2]], 6, "*"
+			end
+
+			it "should solve for a board size of 3" do
+				@solver.solve(@region, 3).sort.should == [
+					[2, 3], [3, 2]
+				]
+			end
+
+			it "should solve for a board size of 6" do
+				@solver.solve(@region, 6).sort.should == [
+					[1, 6], [2, 3], [3, 2], [6, 1]
+				]
+			end
+		end
+	end
+
+	describe "with subtraction" do
+		describe "2x1 with difference of 1" do
+			before do
+				@region = Region.new [[1, 1], [1, 2]], 1, "-"
+			end
+
+			it "should solve for a board size of 3" do
+				@solver.solve(@region, 3).sort.should == [
+					[1,2], [2,1], [2,3], [3,2]
+				]
+			end
+
+			it "should solve for a board size of 6" do
+				@solver.solve(@region, 6).sort.should == [
+					[1,2], [2,1], [2,3], [3,2], [3,4], [4,3], [4,5], [5,4], [5,6], [6,5]
+				]
+			end
+		end
+	end
+
+	describe "with division" do
+		describe "2x1 with quotient of 2" do
+			before do
+				@region = Region.new [[1, 1], [1, 2]], 2, "/"
+			end
+
+			it "should solve for a board size of 3" do
+				@solver.solve(@region, 3).sort.should == [
+					[1,2], [2,1]
+				]
+			end
+
+			it "should solve for a board size of 4" do
+				@solver.solve(@region, 4).sort.should == [
+					[1,2], [2,1], [2, 4], [4, 2]
+				]
+			end
+
+			it "should solve for a board size of 6" do
+				@solver.solve(@region, 6).sort.should == [
+					[1,2], [2,1], [2, 4], [3, 6], [4, 2], [6, 3]
+				]
+			end
 		end
 	end
 end

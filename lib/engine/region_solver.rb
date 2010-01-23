@@ -12,6 +12,28 @@ class RegionSolver
 			return false
 		end
 
+		if region.operator == "+"
+			total = combo.inject {|result, element| result + element}
+			if total != region.total
+				return false
+			end
+
+		elsif region.operator == "*"
+			if  region.total != combo.inject {|result, element| result * element}
+				return false
+			end
+
+		elsif region.operator == "-"
+			if  region.total != combo.inject {|result, element| result - element}.abs
+				return false
+			end
+		elsif region.operator == "/"
+			ordered = combo.sort
+			if ordered[0] * region.total != ordered[1]
+				return false
+			end
+		end
+
 		true
 	end
 
