@@ -1,4 +1,6 @@
 require "spec"
+require File.dirname(__FILE__) + '/spec_helper.rb'
+require "board"
 
 describe "Parsing a board" do
 	describe "1x1 grid"  do
@@ -27,12 +29,7 @@ describe "Parsing a board" do
 		end
 	end
 
-	def should_be_invalid regions
-		@board = Board.new regions
-		@board.is_valid.should == false
-	end
-
-	describe "recognizing invalid layouts" do
+	describe "recognizing validity of various layouts" do
 		it "should not allow multiple entries for the same square" do
 			should_be_invalid([
 				{
@@ -63,55 +60,50 @@ describe "Parsing a board" do
 			}])
 		end
 
+		it "should allow valid 2x2 grid" do
+			should_be_valid([
+				{:squares => [[1,1], [1,2]], :total => 2},
+				{:squares => [[2,1], [2,2]], :total => 2}])
+		end
+
+		it "should not allow non-contiguous regions" do
+			should_be_invalid([
+				{:squares => [[1,1], [2,2]], :total => 2},
+				{:squares => [[1,2], [2,1]], :total => 2}])
+		end
+
+		describe "region checking for contiguity"  do
+
+			it "should recognize simple contiguous region" do
+				region = Region.new([[1,2], [1,1]], 1, "")
+				region.is_contiguous.should == true
+			end
+
+
+			it "should recognize larger contiguous region" do
+				region = Region.new([[1,2], [1,1], [2,2], [3,2], [4,2], [4,3]], 1, "")
+				region.is_contiguous.should == true
+			end
+
+
+			it "should recognize non-contiguous region" do
+				region = Region.new([[1,2], [2,1]], 1, "")
+				region.is_contiguous.should == false
+			end
+
+		end
 	end
 end
 
-class Board
-	def initialize regions
-		@regions = []
-
-		regions.each do |r|
-			@regions.push Region.new r[:squares], r[:total], r[:operator]
-		end
-	end
-
-	def regions
-		@regions
-	end
-
-	def is_valid
-		all_squares = []
-		@regions.each {|r| all_squares += r.squares}
-
-		board_size =  [0, 1, 4, 9, 16, 25, 36].index(all_squares.length)
-
-		if board_size == nil
-			return false
-		end
-
-		while all_squares.length > 0 do
-			head = all_squares.shift
-
-			if all_squares.include? head
-				return false
-			end
-
-			if head.any? {|x| x > board_size}
-				return false
-			end
-		end
-
-		return true
-	end
+def should_be_invalid regions
+	check_validity regions, false
 end
 
-class Region
-	attr_reader :squares, :total, :operator
+def should_be_valid regions
+	check_validity regions, true
+end
 
-	def initialize squares, total, operator
-		@squares = squares
-		@total = total
-		@operator = operator
-	end
-
+def check_validity regions, expected
+	@board = Board.new regions
+	@board.is_valid.should == expected
 end
