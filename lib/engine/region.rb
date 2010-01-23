@@ -2,7 +2,7 @@
 class Region
 	attr_reader :squares, :total, :operator
 
-	def initialize squares, total, operator
+	def initialize squares, total = nil, operator = nil
 		@squares = squares
 		@total = total
 		if operator != nil && operator.length > 0
