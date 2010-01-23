@@ -18,5 +18,19 @@ describe "Region" do
 			region.is_contiguous.should == false
 		end
 	end
+
+	describe "finding edges" do
+		before do
+			@region = Region.new [[1, 1], [1, 2], [1, 3], [2, 1]], 4, " "
+		end
+
+		it "should find right edges" do
+			@region.right_edges.should == [[1, 3], [2, 1]]
+		end
+
+		it "should find bottom edges" do
+			@region.bottom_edges.should == [[1, 2], [1, 3], [2, 1]]
+		end
+	end
 end
 

@@ -2,6 +2,7 @@
 # from the project root directory.
 ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path(File.join(File.dirname(__FILE__),'..','config','environment'))
+require File.dirname(__FILE__) + '/test_data.rb'
 require 'spec/autorun'
 require 'spec/rails'
 

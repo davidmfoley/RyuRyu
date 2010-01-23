@@ -81,26 +81,9 @@ describe "Board" do
 	end
 
 	describe "finding edges" do
-		describe "in a region" do
-			before do
-				@region = Region.new [[1, 1], [1, 2], [1, 3], [2, 1]], 4, " "
-			end
-
-			it "should find right edges" do
-				@region.right_edges.should == [[1, 3], [2, 1]]
-			end
-
-			it "should find bottom edges" do
-				@region.bottom_edges.should == [[1, 2], [1, 3], [2, 1]]
-			end
-		end
-
 		describe "in a 3x3 board" do
 			before do
-				@board = Board.new [{:squares => [[1, 1], [1, 2]], :total => 2},
-				{:squares => [[2, 1], [2, 2]], :total => 2},
-				{:squares => [[3, 1], [3, 2]], :total => 2},
-				{:squares => [[1, 3], [2, 3], [3, 3]], :total => 2}]
+				@board = TestData.board(:complex_3x3)
 			end
 
 			it "should return all right edges" do
