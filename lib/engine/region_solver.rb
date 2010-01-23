@@ -13,28 +13,38 @@ class RegionSolver
 		end
 
 		if region.operator == "+"
-			total = combo.inject {|result, element| result + element}
-			if total != region.total
-				return false
-			end
-
+			adds_to combo, region.total
 		elsif region.operator == "*"
-			if  region.total != combo.inject {|result, element| result * element}
-				return false
-			end
-
+			multiplies_to combo, region.total
 		elsif region.operator == "-"
-			if  region.total != combo.inject {|result, element| result - element}.abs
-				return false
-			end
+			subtracts_to combo, region.total
 		elsif region.operator == "/"
-			ordered = combo.sort
-			if ordered[0] * region.total != ordered[1]
-				return false
-			end
+			divides_to combo, region.total
+		elsif (region.total || 0) > 0
+			adds_to(combo, region.total) ||
+			multiplies_to(combo, region.total) ||
+			subtracts_to(combo, region.total) ||
+			divides_to(combo, region.total)
+		else
+			true
 		end
+	end
 
-		true
+	def adds_to combo, total
+		total == combo.inject {|result, element| result + element}
+	end
+
+	def subtracts_to combo, total
+		combo.length == 2 && total == combo.inject {|result, element| result - element}.abs
+	end
+
+	def divides_to combo, total
+		ordered = combo.sort
+		return combo.length == 2  && ordered[0] * total == ordered[1]
+	end
+
+	def multiplies_to combo, total
+		total == combo.inject {|result, element| result * element}
 	end
 
 	def has_duplicates combo, region		
