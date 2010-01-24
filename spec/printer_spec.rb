@@ -9,9 +9,9 @@ describe "Formatting boards for display" do
 		board = TestData.board(:simple_1x1)
 
 		Printer.new(board).format_board.should == [
-			"+--+",
-			"|1 |",
-			"+--+"
+			"+---+",
+			"|1  |",
+			"+---+"
 		]
 	end
 
@@ -23,11 +23,11 @@ describe "Formatting boards for display" do
 
 			puts result
 			result.should == [
-				"+--+--+",
-				"|1 |2 |",
-				"+  +  +",
-				"|  |  |",
-				"+--+--+"
+				"+---+---+",
+				"|1  |2  |",
+				"+   +   +",
+				"|   |   |",
+				"+---+---+"
 			]
 		end
 
@@ -38,11 +38,11 @@ describe "Formatting boards for display" do
 
 			puts result
 			result.should == [
-				"+--+--+",
-				"|1    |",
-				"+--+--+",
-				"|2    |",
-				"+--+--+"
+				"+---+---+",
+				"|1      |",
+				"+---+---+",
+				"|2      |",
+				"+---+---+"
 			]
 		end
 	end
@@ -55,13 +55,13 @@ describe "Formatting boards for display" do
 
 			puts result
 			result.should == [
-				"+--+--+--+",
-				"|1+   |4/|",
-				"+--+--+  +",
-				"|2-   |  |",
-				"+--+--+  +",
-				"|3*   |  |",
-				"+--+--+--+"
+				"+---+---+---+",
+				"|1+     |4/ |",
+				"+---+---+   +",
+				"|2-     |   |",
+				"+---+---+   +",
+				"|3*     |   |",
+				"+---+---+---+"
 			]
 		end
 	end

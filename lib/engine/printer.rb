@@ -38,7 +38,7 @@ class Printer
 		top_and_bottom = "+"
 
 		for row in 1..@board.size
-			top_and_bottom += "--+"
+			top_and_bottom += "---+"
 		end
 		return top_and_bottom
 	end
@@ -48,15 +48,19 @@ class Printer
 	end
 
 	def get_bottom_edge square
-		return (@board.bottom_edges.include? square) ? "--+" : "  +"
+		return (@board.bottom_edges.include? square) ? "---+" : "   +"
 	end
 
 	def get_contents square
 		region = @board.regions.select {|r| r.squares[0] == square}
 		if nil != region && region.length > 0
-			region[0].total.to_s + region[0].operator.to_s
+			sq = region[0].total.to_s + region[0].operator.to_s
+			if sq.length == 2
+				sq += " "
+			end
+			sq
 		else
-			"  "
+			"   "
 		end
 
 	end
