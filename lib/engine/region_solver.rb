@@ -2,29 +2,38 @@ require "region"
 
 class RegionSolver
 	def solve region, board_size
-		all_possibilities = get_all_possibilities region.squares.length, board_size
 
-		all_possibilities.select {|p| is_valid_combination(p, region)}
+		solver_job = RegionSolverJob.new(region, board_size)
+		
+		solver_job.get_solutions
+	end
+end
+
+class RegionSolverJob
+	def initialize region, board_size
+		@region = region
+		@board_size = board_size
 	end
 
-	def is_valid_combination combo, region
-		if has_duplicates combo, region
-			return false
-		end
+	def get_solutions
+		combinations = get_all_combinations  @region.squares.length
+		combinations.select {|combo| is_valid_combination(combo)}
+	end
 
-		if region.operator == "+"
-			adds_to combo, region.total
-		elsif region.operator == "*"
-			multiplies_to combo, region.total
-		elsif region.operator == "-"
-			subtracts_to combo, region.total
-		elsif region.operator == "/"
-			divides_to combo, region.total
-		elsif (region.total || 0) > 0
-			adds_to(combo, region.total) ||
-			multiplies_to(combo, region.total) ||
-			subtracts_to(combo, region.total) ||
-			divides_to(combo, region.total)
+	def is_valid_combination combo
+		if @region.operator == "+"
+			adds_to combo, @region.total
+		elsif @region.operator == "*"
+			multiplies_to combo, @region.total
+		elsif @region.operator == "-"
+			subtracts_to combo, @region.total
+		elsif @region.operator == "/"
+			divides_to combo, @region.total
+		elsif (@region.total || 0) > 0
+			adds_to(combo, @region.total) ||
+				multiplies_to(combo, @region.total) ||
+				subtracts_to(combo, @region.total) ||
+				divides_to(combo, @region.total)
 		else
 			true
 		end
@@ -47,12 +56,12 @@ class RegionSolver
 		total == combo.inject {|result, element| result * element}
 	end
 
-	def has_duplicates combo, region		
-		for i in 0..combo.length
+	def has_duplicates combo
+		for i in 0...combo.length
 			for j in (i+1)..combo.length  do
 				if combo[i] == combo[j]
-					ri = region.squares[i]
-					rj = region.squares[j]
+					ri = @region.squares[i]
+					rj = @region.squares[j]
 
 					if ri[0] == rj[0] || ri[1] == rj[1]
 						return true
@@ -64,16 +73,19 @@ class RegionSolver
 		false
 	end
 
-	def get_all_possibilities length, upper_bound
+	def get_all_combinations length
 		if (length == 1)
-			(1..upper_bound).to_a.map {|x| [x]}
+			(1..@board_size).to_a.map {|x| [x]}
 		else
-			sub_possibilities = get_all_possibilities(length - 1, upper_bound)
+			sub_possibilities = get_all_combinations(length - 1)
 			result = []
 
-			for n in 1..upper_bound
+			for n in 1..@board_size
 				sub_possibilities.each do |sp|
-					result.push [n] + sp	
+					potential_combo = sp + [n]
+					if !has_duplicates potential_combo
+						result.push potential_combo
+					end
 				end
 			end
 			result

@@ -31,7 +31,7 @@ describe "Solving a board" do
 		end
 	end
 
-	describe "multiple solutions" do
+	describe "with multiple solutions" do
 		it "should solve a 2x2 board" do
 			@board = Board.new([
 				{:squares=> [[1, 1], [1, 2], [2, 1]], :total => 4},
@@ -50,12 +50,10 @@ describe "Solving a board" do
 				{:squares=> [[1, 3]], :total => 3},
 				{:squares=> [[3, 1], [3, 2]], :total => 5, :operator =>"+"},
 				{:squares=> [[2, 3], [3, 3]], :total => 3, :operator =>"+"}
-			],
-
-						   [
-							   [2, 1, 3],
-							   [1, 3, 2],
-							   [3, 2, 1]])
+			],[
+			   	[2, 1, 3],
+			   	[1, 3, 2],
+			   	[3, 2, 1]])
 		end
 
 		it "should solve a 4x4 board" do
@@ -68,25 +66,28 @@ describe "Solving a board" do
 				{:squares=> [[4, 1]], :total => 3},
 				{:squares=> [[4, 2], [4, 3]], :total => 4, :operator =>"*"},
 				{:squares=> [[3, 4], [4, 4]], :total => 8, :operator => "*"}
-			],
-
-						   [
-							   [2, 1, 4, 3],
-							   [4, 3, 2, 1],
-							   [1, 2, 3, 4],
-							   [3, 4, 1, 2]])
+			],[
+			   	[2, 1, 4, 3],
+			   	[4, 3, 2, 1],
+			   	[1, 2, 3, 4],
+			   	[3, 4, 1, 2]])
 		end
 
+		it "should solve a huge 9x9 board" do
+			pending 
+			regions = (1..9).map do |row|
+				{:squares => (1..9).map {|col| [row, col]}, :total =>45}
+			end
+
+			solution = BoardSolver.new().solve(Board.new(regions))
+			solution.should != nil
+		end
+		
 		def check_solution regions, expected
 			board = Board.new(regions)
-			puts Printer.new(board).format_board
+			BoardSolver.new().solve(board).should == expected
 
-			puts board.regions.length
-			begin
-				BoardSolver.new().solve(board).should == expected
-			rescue
-				raise $!
-			end
 		end
 	end
+
 end

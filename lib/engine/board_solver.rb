@@ -1,21 +1,8 @@
 require "region_solver"
 
 class BoardSolver
-	def initialize 
+	def initialize
 		@region_solver = RegionSolver.new
-	end
-
-	def empty_matrix(size)
-		matrix = []
-		matrix_row= []
-
-		for x in 1..size do
-			matrix_row.push 0
-		end
-		for x in 1..size do
-			matrix.push matrix_row.clone
-		end
-		return matrix
 	end
 
 	def solve board
@@ -71,18 +58,6 @@ class BoardSolver
 		non_zero_vals.length == non_zero_vals.uniq.length
 	end
 
-	def apply_solution_to_matrix matrix, squares, solution
-		new_matrix = matrix.map {|r| r.clone}
-
-		solution.each_index do |index|
-			square = squares[index]
-
-			new_matrix[square[0] - 1][square[1] -1] = solution[index]
-		end
-
-		new_matrix
-	end
-
 	def empty_matrix(size)
 		matrix = []
 		matrix_row= []
@@ -94,5 +69,49 @@ class BoardSolver
 			matrix.push matrix_row.clone
 		end
 		return matrix
+	end
+
+	def apply_solution_to_matrix matrix, squares, solution
+		new_matrix = matrix.map {|r| r.clone}
+
+		solution.each_index do |index|
+			square = squares[index]
+
+			new_matrix[square[0] - 1][square[1] -1] = solution[index]
+		end
+
+		new_matrix
+	end
+end
+
+class SolutionBoard
+
+	def initialize size
+		@matrix = []
+		matrix_row= []
+
+		for x in 1..size do
+			matrix_row.push 0
+		end
+		for x in 1..size do
+			@matrix.push matrix_row.clone
+		end
+	end
+
+	def apply_solution squares, solution
+		new_matrix = @matrix.map {|r| r.clone}
+
+		solution.each_index do |index|
+			square = squares[index]
+
+			new_matrix[square[0] - 1][square[1] -1] = solution[index]
+		end
+
+		copy = SolutionBoard.new_copy matrix.length
+		new_matrix
+	end
+
+	def self.new_copy matrix
+
 	end
 end

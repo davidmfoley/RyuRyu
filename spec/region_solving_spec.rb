@@ -186,6 +186,38 @@ describe "Getting solutions for a region" do
 			end
 		end
 
+		describe "degenerate 6-square region case" do
+			it "should solve within a reasonable amount of time" do
+
+				squares = (1..6).map {|row| [row, 1]}
+				puts squares.map { |s| s.join(",")}
+				region =Region.new(squares, 21)
+
+				time_region_solution(region, 6)
+			end
+		end
+
+		describe "degenerate 7-square region case" do
+			it "should solve within a reasonable amount of time" do
+				squares = (1..7).map {|row| [row, 1]}
+				puts squares.map { |s| s.join(",")}
+				region =Region.new(squares, 28)
+
+				time_region_solution(region, 7)
+			end
+		end
+
+		describe "degenerate 8-square region case" do
+			it "should solve within a reasonable amount of time" do
+				pending "takes a long time"
+				squares = (1..8).map {|row| [row, 1]}
+				puts squares.map { |s| s.join(",")}
+				region =Region.new(squares, 36)
+
+				time_region_solution(region, 8)
+			end
+		end
+
 		describe "L-shaped 3 squares with total of 9" do
 			before do
 				@region = Region.new [[1, 1], [1, 2], [2,1]], 9
@@ -198,6 +230,12 @@ describe "Getting solutions for a region" do
 					[4, 2, 3], [4, 3, 2]
 				]
 			end
+		end
+
+		def time_region_solution(region, size)
+			time = nil
+			puts Benchmark.measure { time = RegionSolver.new.solve(region, size) }
+			time
 		end
 	end
 end
