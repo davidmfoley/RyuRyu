@@ -1,29 +1,40 @@
-
+require "region"
 class MathChecker
 
-	def initialize total, board_size
+	def initialize total, board_size, square_count
 		@total = total
 		@board_size = board_size
+		@square_count = square_count
 	end
 
-	def check_partial combo
-		true
-	end
-
-	def self.get operator, total, board_size
-		if operator == "+"
-			return AddChecker.new total, board_size
-		elsif operator == "*"
-			return MultiplyChecker.new total, board_size
-		elsif operator == "-"
-			return SubtractChecker.new total, board_size
-		elsif operator == "/"
-			return DivideChecker.new total, board_size
-		elsif (total || 0) > 0
-			return NoOpChecker.new total, board_size
+	def check combo
+		if combo.length == @square_count
+			check_solution combo
 		else
-			return NoConstraintChecker.new
+			check_partial combo
 		end
+	end
+
+	def self.get region, board_size
+		square_count = region.squares.length
+
+		operator = region.operator
+		total = region.total
+
+		if operator == "+" || square_count == 1
+			checker = AddChecker.new total, board_size, square_count
+		elsif operator == "*"
+			checker = MultiplyChecker.new total, board_size, square_count
+		elsif operator == "-"
+			checker = SubtractChecker.new total, board_size, square_count
+		elsif operator == "/"
+			checker = DivideChecker.new total, board_size, square_count
+		elsif (total || 0) > 0
+			checker = NoOpChecker.new total, board_size, square_count
+		else
+			checker = NoConstraintChecker.new
+		end
+		return checker
 	end
 
 
@@ -34,7 +45,16 @@ end
 
 class AddChecker < MathChecker
 	def check_partial combo
-		@total > combo.inject {|result, element| result + element}
+		@total >= (@square_count - combo.length) + get_sum(combo)
+	end
+
+	def check_solution combo
+		result = @total == get_sum(combo)
+		result
+	end
+
+	def get_sum(combo)
+		combo.inject {|result, element| result + element}
 	end
 end
 
@@ -51,17 +71,13 @@ end
 
 class DivideChecker < MathChecker
 	def check_partial combo
-		if combo.length > 1
-			return false
-		end
-		(combo[0] * total) <= @board_size
+		(combo[0] * @total) <= @board_size
 	end
 
 	def check_solution combo
 		sorted = combo.sort
 
 		sorted[0] * @total == sorted[1]
-
 	end
 end
 
@@ -77,31 +93,29 @@ class SubtractChecker < MathChecker
 	end
 end
 
-class NoOpChecker
-	def initialize total, board_size
+class NoOpChecker < MathChecker
+	def initialize total, board_size, square_count
 		@sub_checkers = [
-			AddChecker.new(total, board_size),
-			MultiplyChecker.new(total, board_size),
-			SubtractChecker.new(total, board_size),
-			DivideChecker.new(total, board_size)
+			AddChecker.new(total, board_size, square_count),
+			MultiplyChecker.new(total, board_size, square_count)
 		]
+
+		if square_count == 2
+			@sub_checkers.concat([
+				SubtractChecker.new(total, board_size, square_count),
+				DivideChecker.new(total, board_size, square_count)
+			])
+		end
 	end
 
-	def check_partial combo
-		@sub_checkers.any?{|checker| checker.check_partial combo}
-	end
-
-	def check_solution combo
-		@sub_checkers.any?{|checker| checker.check_solution combo}
+	def check combo
+		result = @sub_checkers.any?{|checker| checker.check combo}
+		result
 	end
 end
 
 class NoConstraintChecker
-	def check_partial combo
-		true
-	end
-
-	def check_solution combo
+	def check combo
 		true
 	end
 end

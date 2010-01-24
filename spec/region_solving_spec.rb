@@ -203,13 +203,14 @@ describe "Getting solutions for a region" do
 
 				time_region_solution(region, 7)
 				time_region_solution(region, 8)
+				time_region_solution(region, 9)
 			end
 		end
 
 		describe "degenerate 8-square region case" do
 			it "should solve within a reasonable amount of time" do
 				squares = (1..8).map {|row| [row, 1]}
-				region =Region.new(squares, 36)
+				region = Region.new(squares, 36)
 
 				time_region_solution(region, 8)
 			end

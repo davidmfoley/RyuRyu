@@ -15,12 +15,11 @@ class RegionSolverJob
 		@region = region
 		@board_size = board_size
 		@duplicate_checker = DuplicateChecker.new(region.squares)
-		@math_checker = MathChecker.get(region.operator, region.total, board_size)
+		@math_checker = MathChecker.get(region, board_size)
 	end
 
 	def get_solutions
-		combinations = get_all_combinations  @region.squares.length
-		combinations.select {|combo| @math_checker.check_solution(combo)}
+		get_all_combinations(@region.squares.length).select{|c| @math_checker.check(c)}
 	end
 
 	def get_all_combinations length
@@ -32,16 +31,18 @@ class RegionSolverJob
 
 			for n in 1..@board_size
 				sub_possibilities.each do |sp|
-					potential_combo = sp + [n]
-					if !@duplicate_checker.has_duplicates potential_combo
-						if (length == @region.squares.length) || @math_checker.check_partial(potential_combo)
-							result.push potential_combo
-						end
+					combo = sp + [n]
+					if combination_is_valid(combo)
+						result.push combo
 					end
 				end
 			end
 			result
 		end
+	end
+
+	def combination_is_valid(combo)
+		(!@duplicate_checker.has_duplicates(combo)) && @math_checker.check(combo)
 	end
 end
 
