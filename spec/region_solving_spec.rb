@@ -190,7 +190,6 @@ describe "Getting solutions for a region" do
 			it "should solve within a reasonable amount of time" do
 
 				squares = (1..6).map {|row| [row, 1]}
-				puts squares.map { |s| s.join(",")}
 				region =Region.new(squares, 21)
 
 				time_region_solution(region, 6)
@@ -200,18 +199,16 @@ describe "Getting solutions for a region" do
 		describe "degenerate 7-square region case" do
 			it "should solve within a reasonable amount of time" do
 				squares = (1..7).map {|row| [row, 1]}
-				puts squares.map { |s| s.join(",")}
 				region =Region.new(squares, 28)
 
 				time_region_solution(region, 7)
+				time_region_solution(region, 8)
 			end
 		end
 
 		describe "degenerate 8-square region case" do
 			it "should solve within a reasonable amount of time" do
-				pending "takes a long time"
 				squares = (1..8).map {|row| [row, 1]}
-				puts squares.map { |s| s.join(",")}
 				region =Region.new(squares, 36)
 
 				time_region_solution(region, 8)

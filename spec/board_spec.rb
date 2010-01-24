@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/spec_helper.rb'
 require "board"
 
-describe "Board" do
+describe "Board: representation of a puzzle," do
 	describe "1x1 board"  do
 		before do
 			@board = Board.new([{
@@ -96,7 +96,6 @@ describe "Board" do
 		end
 	end
 end
-
 
 def should_be_invalid regions
 	check_validity regions, false
