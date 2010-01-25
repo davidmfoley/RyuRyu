@@ -71,7 +71,7 @@ end
 
 class DivideChecker < MathChecker
 	def check_partial combo
-		(combo[0] * @total) <= @board_size
+		(combo[0] % @total == 0) || (combo[0] * @total <= @board_size)
 	end
 
 	def check_solution combo
@@ -83,9 +83,7 @@ end
 
 class SubtractChecker < MathChecker
 	def check_partial combo
-		if combo.length > 1
-			return false
-		end
+		true
 	end
 
 	def check_solution combo

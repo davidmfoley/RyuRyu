@@ -24,7 +24,7 @@ class RegionSolverJob
 
 	def get_all_combinations length
 		if (length == 1)
-			(1..@board_size).to_a.map {|x| [x]}
+			(1..@board_size).map {|x| [x]}.select{|combo| @math_checker.check combo}
 		else
 			sub_possibilities = get_all_combinations(length - 1)
 			result = []

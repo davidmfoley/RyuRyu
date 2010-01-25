@@ -85,7 +85,6 @@ class BoardSolver
 end
 
 class SolutionBoard
-
 	def initialize size
 		@matrix = []
 		matrix_row= []
@@ -107,11 +106,6 @@ class SolutionBoard
 			new_matrix[square[0] - 1][square[1] -1] = solution[index]
 		end
 
-		copy = SolutionBoard.new_copy matrix.length
 		new_matrix
-	end
-
-	def self.new_copy matrix
-
 	end
 end
