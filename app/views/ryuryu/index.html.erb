@@ -1,0 +1,60 @@
+<%
+   def get_classes_for square
+	   classes = []
+
+	   if (square[0] == 0)
+		   classes << 'outside-top-edge'
+	   end
+
+	   if (square[1] == 0)
+		   classes << 'outside-left-edge'
+	   end
+
+	   if (square[0] == @board.size)
+		   classes << "outside-bottom-edge"
+	   elsif @board.bottom_edges.include?(square)
+		   classes << 'bottom-edge'
+	   end
+
+	   if (square[1] == @board.size)
+		   classes << "outside-right-edge"
+	   elsif  @board.right_edges.include?(square)
+		   classes << ' right-edge'
+	   end
+
+	   classes.join(" ")
+   end
+
+   def region_info_for square
+	   region = @board.regions.detect {|r| r.squares.include? square}
+	   is_first_square = region.squares[0] == square
+	   if is_first_square
+		   "<div class='region-info'>#{region.total}#{region.operator}</div>"
+	   else
+		   ""
+	   end
+   end
+
+%>
+<div class="board-wrapper">
+	<table>
+		<% (1..@board.size).each do |row| %>
+			<tr>
+				<% (1..@board.size).each do |col|
+					square = [row, col]
+				%>
+					<td class="<%= get_classes_for([row, col]) %>">
+						<div class="square">
+							<%= region_info_for square %>
+							<% if @solution != nil %>
+								<div class="solution">
+									<%= @solution[row-1][col-1] %>
+								</div>
+							<% end %>
+						</div>
+					</td>
+				<% end %>
+			</tr>
+		<% end %>
+	</table>
+</div>

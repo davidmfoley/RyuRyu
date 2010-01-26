@@ -1,4 +1,5 @@
 require "region"
+
 class MathChecker
 
 	def initialize total, board_size, square_count
@@ -36,7 +37,6 @@ class MathChecker
 		end
 		return checker
 	end
-
 
 	def check_solution combo
 		@total == combo.inject {|result, element| result + element}
