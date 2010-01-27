@@ -1,5 +1,6 @@
 .board-wrapper {
 	font-family: Helvetica, Arial, San Serif;
+	position:relative;
 
 }
 .board-wrapper table {
@@ -15,24 +16,24 @@
 	border: 1px solid #EEC;
 }
 
-.board-wrapper td.right-edge {
+.board-wrapper .right-edge {
 	border-right:1px solid gray;
 }
 
-.board-wrapper td.bottom-edge {
+.board-wrapper .bottom-edge {
 	border-bottom:1px solid gray;
 }
 
-.board-wrapper td.outside-top-edge {
+.board-wrapper .outside-top-edge {
 	border-top:2px solid black;
 }
-.board-wrapper td.outside-left-edge {
+.board-wrapper .outside-left-edge {
 	border-left:2px solid black;
 }
-.board-wrapper td.outside-right-edge {
+.board-wrapper .outside-right-edge {
 	border-right:2px solid black;
 }
-.board-wrapper td.outside-bottom-edge {
+.board-wrapper .outside-bottom-edge {
 	border-bottom:2px solid black;
 }
 

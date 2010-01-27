@@ -2,15 +2,17 @@ var ryuryu = {};
 
 ryuryu.board = function(element) {
 	var wrapper = $(element);
+	var data = "[{}]";
 	return {
 		load : function(json) {
+			data = json;
 			wrapper.html('');
 			var squares = {};
 			var regions = eval(json);
 
 			var squareMarkup = "";
 
-			square_count = 0;
+			var square_count = 0;
 
 			for (var i = 0; i < regions.length; i++) {
 				var region = regions[i];
@@ -45,6 +47,10 @@ ryuryu.board = function(element) {
 			console.log(squareMarkup);
 
 			wrapper.html(squareMarkup);
+		},
+		toJson : function() {
+			//temp... once this is editable, this will need to change
+			return data;
 		}
 	};
 

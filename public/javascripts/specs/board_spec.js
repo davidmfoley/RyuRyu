@@ -27,10 +27,10 @@ Screw.Unit(function() {
 			it('should have all four outer edges set', function() {
 				var square = $('.square');
 
-				expect(square).to(match_selector, ".outside-top-edge" );
-				expect(square).to(match_selector, ".outside-bottom-edge" );
-				expect(square).to(match_selector, ".outside-left-edge" );
-				expect(square).to(match_selector, ".outside-right-edge" );
+				expect(square).to(match_selector, ".outside-top-edge");
+				expect(square).to(match_selector, ".outside-bottom-edge");
+				expect(square).to(match_selector, ".outside-left-edge");
+				expect(square).to(match_selector, ".outside-right-edge");
 			});
 
 			it('should not have region edges', function() {
@@ -79,7 +79,7 @@ Screw.Unit(function() {
 			});
 
 			it('should not display total or operator in the other two squares', function() {
-				expect($('.square').slice(2,3).text()).to(equal, "");
+				expect($('.square').slice(2, 3).text()).to(equal, "");
 			});
 
 			it('should set region edges on the top-left square', function() {
@@ -89,6 +89,26 @@ Screw.Unit(function() {
 			it('should not set region edges on any other squares', function() {
 				expect($('.square.right-edge').length).to(equal, 1);
 				expect($('.square.bottom-edge').length).to(equal, 1);
+			});
+
+			describe('serializing to json', function() {
+				var jsonResult;
+				before(function() {
+					jsonResult = eval(board.toJson());
+				});
+
+				it('should have two regions', function() {
+					expect(jsonResult.length).to(equal, 2);
+				});
+
+				it('should have 1 square in the first region', function() {
+					expect(jsonResult[0].squares.length).to(equal, 1);
+				});
+
+				it('should have 3 squares in the second region', function() {
+					expect(jsonResult[1].squares.length).to(equal, 3);
+				});
+
 			});
 		});
 	});
