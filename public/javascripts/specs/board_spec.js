@@ -6,15 +6,7 @@ Screw.Unit(function() {
 				$('#sandbox').html('<div id="board-wrapper"></div>"');
 				board = ryuryu.board($('#board-wrapper'));
 
-				board.load([
-					{
-						squares : [
-							[1,1]
-						],
-						total : 1,
-						operator : "+"
-					}
-				]);
+				board.load('{regions:[{squares : [[1,1]],total : 1,	operator : "+"}]}');
 			});
 
 			it('should have a square', function() {
@@ -46,24 +38,7 @@ Screw.Unit(function() {
 				$('#sandbox').html('<div id="board-wrapper"></div>"');
 				board = ryuryu.board($('#board-wrapper'));
 
-				board.load([
-					{
-						squares : [
-							[1,1]
-						],
-						total : 1,
-						operator : "+"
-					},
-					{
-						squares : [
-							[1,2],
-							[2,1],
-							[2,2]
-						],
-						total : 4,
-						operator : "*"
-					}
-				]);
+				board.load('{regions:[{squares : [[1,1]],	total : 1,operator : "+"},{	squares : [[1,2],[2,1],[2,2]],total : 4,operator : "*"}]}');
 			});
 
 			it('should have four squares', function() {

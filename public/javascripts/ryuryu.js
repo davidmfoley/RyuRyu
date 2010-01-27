@@ -8,9 +8,7 @@ ryuryu.board = function(element) {
 			data = json;
 			wrapper.html('');
 			var squares = {};
-			var regions = eval(json);
-
-			var squareMarkup = "";
+			var regions = eval("(" + json + ")").regions;
 
 			var square_count = 0;
 
@@ -36,15 +34,18 @@ ryuryu.board = function(element) {
 
 			var board_size = Math.sqrt(square_count);
 
+			var squareMarkup = "<div class='board-wrapper'> <table>";
+
 			for (var row = 1; row <= board_size; row++) {
+				squareMarkup += "<tr>";
 				for (var col = 1; col <= board_size; col++) {
 					var s = squares[[row, col]];
 
-					squareMarkup += "<div class='square" + getSquareClasses(s, row, col, board_size) + "'><div class='region-info'>" + s.info + "</div></div>";
+					squareMarkup += "<td class='" + getSquareClasses(s, row, col, board_size) + "'><div class='square'><div class='region-info'>" + s.info + "</div></div></td>";
 				}
+				squareMarkup += "</tr>"
 			}
-
-			console.log(squareMarkup);
+			squareMarkup += "</table></div";
 
 			wrapper.html(squareMarkup);
 		},

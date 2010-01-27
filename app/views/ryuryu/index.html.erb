@@ -36,6 +36,7 @@
    end
 
 %>
+<h3>Server-side rendering</h3>
 <div class="board-wrapper">
 	<table>
 		<% (1..@board.size).each do |row| %>
@@ -58,3 +59,10 @@
 		<% end %>
 	</table>
 </div>
+<h3>Client-side rendering</h3>
+<div id="js-board"></div>
+<script type="text/javascript">
+	var json = '<%=@json%>';
+	var board = ryuryu.board($("#js-board"));
+	board.load(json);
+</script>

@@ -15,6 +15,8 @@ class RyuryuController < ApplicationController
 		solver = BoardSolver.new()
 		@solution = solver.solve(@board)
 
+		@json = JsonSerializer.new.serialize(@board)
+
 		puts @solution.map{|r| r.join(",")}
 		puts @solution
 	end
