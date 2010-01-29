@@ -118,7 +118,6 @@ ryuryu.boardDisplay = function(element) {
 	}
 
 	function getSquareClasses(square, row, col) {
-
 		var hasRightNeighbor = false, hasBottomNeigbor = false;
 
 		for (var i = 0; i < square.region.squares.length; i++) {
@@ -143,19 +142,33 @@ ryuryu.boardDisplay = function(element) {
 	}
 };
 
-ryuryu.editOverlay = function(targetBoard) {
+ryuryu.editOverlay = function(boardDisplay) {
 	var overlay = $('<div class="edit-overlay"/>');
-	var board = targetBoard;
 
 	function init() {
-		for (var row = 0; row < board.size; row++) {
-			for (var col = 0; col < board.size - 1; col++) {
-				if (col < board.size - 1)
+		var board = boardDisplay.board();
+		
+		for (var row = 0; row < board.size(); row++) {
+			for (var col = 0; col < board.size(); col++) {
+				if (col < board.size() - 1)
 					addRightEdge(row + 1, col + 1);
-				if (row < board.size - 1)
+				if (row < board.size() - 1)
 					addBottomEdge(row + 1, col + 1);
 			}
 		}
+
+		var p = boardDisplay.wrapper().position();
+		overlay.css({left:p.left,  top:p.top});
+
+		$('body').append(overlay);
+	}
+
+	function addRightEdge(row, col) {
+		overlay.append($('<div/>').addClass('overlay-right-edge').css({left:(80 * col - 5), top:((row-1) *80)}));
+	}
+
+	function addBottomEdge(row, col) {
+		overlay.append($('<div/>').addClass('overlay-bottom-edge').css({top:(80 * row - 5), left:((col-1) *80)}));
 	}
 
 

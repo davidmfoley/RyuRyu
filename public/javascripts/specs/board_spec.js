@@ -118,14 +118,14 @@ Screw.Unit(function() {
 			var board;
 			before(function() {
 				$('#sandbox').html('<div id="board-wrapper"></div>"');
-				board = ryuryu.board($('#board-wrapper'));
+				board = ryuryu.boardDisplay($('#board-wrapper'));
 
 				board.load('{regions:[{squares : [[1,1]],	total : 1,operator : "+"},{	squares : [[1,2],[2,1],[2,2]],total : 4,operator : "*"}]}');
 
 				overlay = ryuryu.editOverlay(board);
 			});
 
-			describe('building edges', function() {
+			describe('overlay edges', function() {
 				it('should be positioned over the board', function() {
 					expect("not yet implemented").to(equal, "implemented");
 				});
