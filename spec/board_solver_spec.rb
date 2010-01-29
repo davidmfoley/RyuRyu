@@ -23,8 +23,6 @@ describe "Solving a board" do
 				{:squares=> [[2, 2]], :total => 1}
 			])
 
-			puts @board.size
-
 			@solver.solve(@board).should == [
 				[1, 2],
 				[2, 1]]

@@ -17,7 +17,7 @@ Screw.Unit(function() {
 			});
 
 			it('should have all four outer edges set', function() {
-				var square = $('.square');
+				var square = $('td');
 
 				expect(square).to(match_selector, ".outside-top-edge");
 				expect(square).to(match_selector, ".outside-bottom-edge");
@@ -42,28 +42,28 @@ Screw.Unit(function() {
 			});
 
 			it('should have four squares', function() {
-				expect($('.square').length).to(equal, 4);
+				expect($('td').length).to(equal, 4);
 			});
 
 			it('should display the total and operator in the top-left square', function() {
-				expect($('.square').first().text()).to(equal, "1+");
+				expect($('td').first().text()).to(equal, "1+");
 			});
 
 			it('should display the total and operator in the second square', function() {
-				expect($('.square').slice(1).first().text()).to(equal, "4*");
+				expect($('td').slice(1).first().text()).to(equal, "4*");
 			});
 
 			it('should not display total or operator in the other two squares', function() {
-				expect($('.square').slice(2, 3).text()).to(equal, "");
+				expect($('td').slice(2, 3).text()).to(equal, "");
 			});
 
 			it('should set region edges on the top-left square', function() {
-				expect($('.square').first()).to(match_selector, ".right-edge.bottom-edge");
+				expect($('td').first()).to(match_selector, ".right-edge.bottom-edge");
 			});
 
 			it('should not set region edges on any other squares', function() {
-				expect($('.square.right-edge').length).to(equal, 1);
-				expect($('.square.bottom-edge').length).to(equal, 1);
+				expect($('td.right-edge').length).to(equal, 1);
+				expect($('td.bottom-edge').length).to(equal, 1);
 			});
 
 			describe('serializing to json', function() {
@@ -84,6 +84,28 @@ Screw.Unit(function() {
 					expect(jsonResult[1].squares.length).to(equal, 3);
 				});
 
+			});
+			
+			describe('applying a solution', function() {
+				var solutions;
+				before(function() {
+					board.applySolution([[1,2],[3,4]]);
+					solutions = $('.square .solution');
+				});
+				it('should have top-left solution', function() {
+					expect($(solutions[0]).text()).to(equal, "1");
+				});
+				it('should have top-right solution', function() {
+					expect($(solutions[1]).text()).to(equal, "2");
+				});
+
+				it('should have bottom-left solution', function() {
+					expect($(solutions[2]).text()).to(equal, "3");
+				});
+
+				it('should have bottom-right solution', function() {
+					expect($(solutions[3]).text()).to(equal, "4");
+				});
 			});
 		});
 	});

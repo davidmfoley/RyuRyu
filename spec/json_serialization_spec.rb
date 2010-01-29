@@ -23,7 +23,6 @@ describe "serializing boards to JSON" do
 	def round_trip_test board
 		serializer = JsonSerializer.new
 		serialized = serializer.serialize board
-		puts serialized
 		result = serializer.deserialize(serialized)
 		result.regions.each_index do |i|
 			result.regions[i].squares.should == board.regions[i].squares

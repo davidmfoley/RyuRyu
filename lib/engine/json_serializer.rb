@@ -7,12 +7,10 @@ class JsonSerializer
 
 	def deserialize serialized
 		data = JSON.parse serialized
-		puts data["regions"]
 		Board.new data["regions"].map{|r| deserialize_region r}
 	end
 
 	def deserialize_region(region)
-		puts region
 		opts = {:squares => region["squares"]}
 		opts[:total] = region["total"] if region["total"]
 

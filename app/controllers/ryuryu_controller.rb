@@ -17,7 +17,5 @@ class RyuryuController < ApplicationController
 
 		@json = JsonSerializer.new.serialize(@board)
 
-		puts @solution.map{|r| r.join(",")}
-		puts @solution
 	end
 end

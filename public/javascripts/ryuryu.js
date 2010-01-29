@@ -52,33 +52,52 @@ ryuryu.board = function(element) {
 		toJson : function() {
 			//temp... once this is editable, this will need to change
 			return data;
+		},
+		applySolution:	function(solution) {
+			var squares = wrapper.find(".square");
+			var index = 0;
+
+
+			for (var row = 0; row < solution.length; row++) {
+				for (var col = 0; col < solution.length; col++) {
+					var square = squares.slice(index, index + 1);
+					var solutionDiv = square.find('.solution');
+					if (solutionDiv.length == 0) {
+						solutionDiv = $("<div class='solution'>" + solution[row][col] + "</div>");
+						square.append(solutionDiv);
+					}
+					else {
+						solutionDiv.text(solution[row][col]);
+					}
+					index++;
+				}
+			}
 		}
 	};
 
 	function getSquareClasses(square, row, col, board_size) {
 
-		var hasRightNeighbor =false, hasBottomNeigbor = false;
+		var hasRightNeighbor = false, hasBottomNeigbor = false;
 
 		for (var i = 0; i < square.region.squares.length; i++) {
 			var other = square.region.squares[i];
 
-			if (other[0] == row+1 && other[1] == col)
+			if (other[0] == row + 1 && other[1] == col)
 				hasBottomNeigbor = true;
-			if (other[0] == row && other[1] == col+1)
+			if (other[0] == row && other[1] == col + 1)
 				hasRightNeighbor = true;
-		
-			console.log(row, col, hasBottomNeigbor, hasRightNeighbor);
 		}
 
-		return	classIf( 'right-edge', (col < board_size) && !hasRightNeighbor) +
-			classIf( 'bottom-edge', (row < board_size) && !hasBottomNeigbor) +
-			classIf( 'outside-top-edge', row == 1) +
-			classIf( 'outside-left-edge', col == 1) +
-			classIf( 'outside-bottom-edge', row == board_size) +
-			classIf( 'outside-right-edge', col == board_size);
+		return	classIf('right-edge', (col < board_size) && !hasRightNeighbor) +
+				  classIf('bottom-edge', (row < board_size) && !hasBottomNeigbor) +
+				  classIf('outside-top-edge', row == 1) +
+				  classIf('outside-left-edge', col == 1) +
+				  classIf('outside-bottom-edge', row == board_size) +
+				  classIf('outside-right-edge', col == board_size);
 	}
 
-	function classIf( className, condition) {
-		return (condition) ? " " + className  : "";
+	function classIf(className, condition) {
+		return (condition) ? " " + className : "";
 	}
-};
+}
+	;
