@@ -1,12 +1,12 @@
 Screw.Unit(function() {
 	describe('loading board from json', function() {
 		describe('for a simple 1x1 board', function() {
-			var board;
+			var boardDisplay;
 			before(function() {
 				$('#sandbox').html('<div id="board-wrapper"></div>"');
-				board = ryuryu.board($('#board-wrapper'));
+				boardDisplay = ryuryu.boardDisplay($('#board-wrapper'));
 
-				board.load('{regions:[{squares : [[1,1]],total : 1,	operator : "+"}]}');
+				boardDisplay.load('{regions:[{squares : [[1,1]],total : 1,	operator : "+"}]}');
 			});
 
 			it('should have a square', function() {
@@ -33,12 +33,12 @@ Screw.Unit(function() {
 
 
 		describe('for a 2x2 board', function() {
-			var board;
+			var boardDisplay;
 			before(function() {
 				$('#sandbox').html('<div id="board-wrapper"></div>"');
-				board = ryuryu.board($('#board-wrapper'));
+				boardDisplay = ryuryu.boardDisplay($('#board-wrapper'));
 
-				board.load('{regions:[{squares : [[1,1]],	total : 1,operator : "+"},{	squares : [[1,2],[2,1],[2,2]],total : 4,operator : "*"}]}');
+				boardDisplay.load('{regions:[{squares : [[1,1]],	total : 1,operator : "+"},{	squares : [[1,2],[2,1],[2,2]],total : 4,operator : "*"}]}');
 			});
 
 			it('should have four squares', function() {
@@ -69,7 +69,7 @@ Screw.Unit(function() {
 			describe('serializing to json', function() {
 				var jsonResult;
 				before(function() {
-					jsonResult = eval(board.toJson());
+					jsonResult = eval(boardDisplay.board().toJson());
 				});
 
 				it('should have two regions', function() {
@@ -85,11 +85,14 @@ Screw.Unit(function() {
 				});
 
 			});
-			
+
 			describe('applying a solution', function() {
 				var solutions;
 				before(function() {
-					board.applySolution([[1,2],[3,4]]);
+					boardDisplay.applySolution([
+						[1,2],
+						[3,4]
+					]);
 					solutions = $('.square .solution');
 				});
 				it('should have top-left solution', function() {
@@ -108,6 +111,34 @@ Screw.Unit(function() {
 				});
 			});
 		});
-	});
 
+		describe('editing board definition', function() {
+			var overlay;
+
+			var board;
+			before(function() {
+				$('#sandbox').html('<div id="board-wrapper"></div>"');
+				board = ryuryu.board($('#board-wrapper'));
+
+				board.load('{regions:[{squares : [[1,1]],	total : 1,operator : "+"},{	squares : [[1,2],[2,1],[2,2]],total : 4,operator : "*"}]}');
+
+				overlay = ryuryu.editOverlay(board);
+			});
+
+			describe('building edges', function() {
+				it('should be positioned over the board', function() {
+					expect("not yet implemented").to(equal, "implemented");
+				});
+
+				it('should have two right edges', function() {
+					expect(overlay.wrapper.find(".overlay-right-edge").length).to(equal, 2);
+				});
+
+
+				it('should have two bottom edges', function() {
+					expect(overlay.wrapper.find(".overlay-bottom-edge").length).to(equal, 2);
+				});
+			});
+		});
+	});
 });

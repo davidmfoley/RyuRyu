@@ -58,3 +58,8 @@
 	font-size:10px;
 }
 
+.edit-overlay {
+	position:absolute;
+	z-index:2;
+}
+

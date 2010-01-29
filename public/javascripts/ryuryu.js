@@ -1,58 +1,75 @@
 var ryuryu = {};
 
-ryuryu.board = function(element) {
-	var wrapper = $(element);
-	var data = "[{}]";
+ryuryu.board = function(json) {
+	var data = json;
+	var squares = {};
+	var jsonRegions = eval("(" + json + ")").regions;
+	var regions = [];
+
+	var square_count = 0;
+	var board_size;
+
+
+	for (var i = 0; i < jsonRegions.length; i++) {
+		var jsonRegion = jsonRegions[i];
+		var region = {
+			squares : [],
+			total : jsonRegion.total,
+			operator : jsonRegion.operator
+		};
+
+		for (var j = 0; j < jsonRegion.squares.length; j++) {
+
+			var square = jsonRegion.squares[j];
+			var info;
+
+			if (j == 0)
+				info = '' + jsonRegion.total + jsonRegion.operator;
+			else
+				info = "";
+
+			squares[square] = {
+				info : info,
+				region : jsonRegion
+			};
+
+			region.squares.push(squares[square]);
+			square_count++;
+		}
+
+		regions.push(region);
+	}
+
+	board_size = Math.sqrt(square_count);
+
 	return {
-		load : function(json) {
-			data = json;
-			wrapper.html('');
-			var squares = {};
-			var regions = eval("(" + json + ")").regions;
-
-			var square_count = 0;
-
-			for (var i = 0; i < regions.length; i++) {
-				var region = regions[i];
-				for (var j = 0; j < region.squares.length; j++) {
-
-					var square = region.squares[j];
-					var info;
-
-					if (j == 0)
-						info = '' + region.total + region.operator;
-					else
-						info = "";
-
-					squares[square] = {
-						info : info,
-						region : region
-					};
-					square_count++;
-				}
-			}
-
-			var board_size = Math.sqrt(square_count);
-
-			var squareMarkup = "<div class='board-wrapper'> <table>";
-
-			for (var row = 1; row <= board_size; row++) {
-				squareMarkup += "<tr>";
-				for (var col = 1; col <= board_size; col++) {
-					var s = squares[[row, col]];
-
-					squareMarkup += "<td class='" + getSquareClasses(s, row, col, board_size) + "'><div class='square'><div class='region-info'>" + s.info + "</div></div></td>";
-				}
-				squareMarkup += "</tr>"
-			}
-			squareMarkup += "</table></div";
-
-			wrapper.html(squareMarkup);
+		squareAt : function(row, col) {
+			return squares[[row,col]];
+		},
+		regions : function() {
+			return regions;
+		},
+		size : function() {
+			return board_size;
 		},
 		toJson : function() {
 			//temp... once this is editable, this will need to change
 			return data;
+		}
+	};
+};
+
+ryuryu.boardDisplay = function(element) {
+	var wrapper = $(element);
+	var board;
+	wrapper.html('');
+
+	return {
+		load : function(json) {
+			board = ryuryu.board(json);
+			buildMarkup();
 		},
+
 		applySolution:	function(solution) {
 			var squares = wrapper.find(".square");
 			var index = 0;
@@ -72,10 +89,35 @@ ryuryu.board = function(element) {
 					index++;
 				}
 			}
+		},
+
+		board : function() {
+			return board;
+		},
+
+		wrapper : function() {
+			return  wrapper
 		}
 	};
 
-	function getSquareClasses(square, row, col, board_size) {
+	function buildMarkup() {
+		var squareMarkup = "<div class='board-wrapper'> <table>";
+
+		for (var row = 1; row <= board.size(); row++) {
+			squareMarkup += "<tr>";
+			for (var col = 1; col <= board.size(); col++) {
+				var s = board.squareAt(row, col);
+
+				squareMarkup += "<td class='" + getSquareClasses(s, row, col) + "'><div class='square'><div class='region-info'>" + s.info + "</div></div></td>";
+			}
+			squareMarkup += "</tr>"
+		}
+		squareMarkup += "</table></div";
+
+		wrapper.html(squareMarkup);
+	}
+
+	function getSquareClasses(square, row, col) {
 
 		var hasRightNeighbor = false, hasBottomNeigbor = false;
 
@@ -88,16 +130,37 @@ ryuryu.board = function(element) {
 				hasRightNeighbor = true;
 		}
 
-		return	classIf('right-edge', (col < board_size) && !hasRightNeighbor) +
-				  classIf('bottom-edge', (row < board_size) && !hasBottomNeigbor) +
+		return	classIf('right-edge', (col < board.size()) && !hasRightNeighbor) +
+				  classIf('bottom-edge', (row < board.size()) && !hasBottomNeigbor) +
 				  classIf('outside-top-edge', row == 1) +
 				  classIf('outside-left-edge', col == 1) +
-				  classIf('outside-bottom-edge', row == board_size) +
-				  classIf('outside-right-edge', col == board_size);
+				  classIf('outside-bottom-edge', row == board.size()) +
+				  classIf('outside-right-edge', col == board.size());
 	}
 
 	function classIf(className, condition) {
 		return (condition) ? " " + className : "";
 	}
-}
-	;
+};
+
+ryuryu.editOverlay = function(targetBoard) {
+	var overlay = $('<div class="edit-overlay"/>');
+	var board = targetBoard;
+
+	function init() {
+		for (var row = 0; row < board.size; row++) {
+			for (var col = 0; col < board.size - 1; col++) {
+				if (col < board.size - 1)
+					addRightEdge(row + 1, col + 1);
+				if (row < board.size - 1)
+					addBottomEdge(row + 1, col + 1);
+			}
+		}
+	}
+
+
+	init();
+	return {
+		wrapper : overlay
+	};
+};

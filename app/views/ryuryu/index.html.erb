@@ -66,7 +66,7 @@
 </div>
 <script type="text/javascript">
 	var json = '<%=@json%>';
-	var board = ryuryu.board($("#js-board"));
+	var board = ryuryu.boardDisplay($("#js-board"));
 	board.load(json);
 
 	$(".solve-button").click(function() {
@@ -75,7 +75,6 @@
 		$.post('solve', {
 				board : json
 			}, function(data) {
-			debugger;
 				board.applySolution(eval(data))
 			});
 	});
