@@ -18,4 +18,12 @@ class RyuryuController < ApplicationController
 		@json = JsonSerializer.new.serialize(@board)
 
 	end
+
+	def solve
+		board_json = params[:board]
+		board = JsonSerializer.new.deserialize board_json
+		solution = BoardSolver.new.solve board
+		puts solution.to_json
+		render :text => solution.to_json
+	end
 end

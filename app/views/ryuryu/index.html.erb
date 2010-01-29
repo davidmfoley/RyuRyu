@@ -61,8 +61,22 @@
 </div>
 <h3>Client-side rendering</h3>
 <div id="js-board"></div>
+<div>
+	<input class="solve-button" type="button" value="Solve!"/>
+</div>
 <script type="text/javascript">
 	var json = '<%=@json%>';
 	var board = ryuryu.board($("#js-board"));
 	board.load(json);
+
+	$(".solve-button").click(function() {
+		var json = board.toJson();
+
+		$.post('solve', {
+				board : json
+			}, function(data) {
+			debugger;
+				board.applySolution(eval(data))
+			});
+	});
 </script>
