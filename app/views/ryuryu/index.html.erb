@@ -72,7 +72,7 @@
 	var overlay = ryuryu.editOverlay(board);
 
 	$(".solve-button").click(function() {
-		var json = board.toJson();
+		var json = board.board().toJson();
 
 		$.post('solve', {
 				board : json

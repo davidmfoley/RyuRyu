@@ -72,6 +72,15 @@
 	border: 1px solid red; /* debug */
 }
 
+div.ui-droppable { 
+	border: 1px solid blue;	
+}
+
+div.ui-draggable-dragging {
+	background-color: blue;
+	border: 1px solid purple;	
+}
+
 .overlay-right-edge {
 	height: 80px;
 	width: 10px;

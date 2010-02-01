@@ -116,6 +116,9 @@ Screw.Unit(function() {
 			var overlay;
 
 			var board;
+			describe('of a 2x2 board', function() {
+
+
 			before(function() {
 				$('#sandbox').html('<div id="board-wrapper"></div>"');
 				board = ryuryu.boardDisplay($('#board-wrapper'));
@@ -139,6 +142,7 @@ Screw.Unit(function() {
 					expect(overlay.wrapper.find(".overlay-bottom-edge").length).to(equal, 2);
 				});
 			});
+				});
 		});
 	});
 });

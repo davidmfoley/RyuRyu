@@ -97,6 +97,29 @@ ryuryu.boardDisplay = function(element) {
 
 		wrapper : function() {
 			return  wrapper
+		},
+		squareInfo : function(row, col) {
+			var index = (row - 1) * board.size() + col - 1;
+
+			var div = $(wrapper.find(".square")[index]);
+
+			var parent = div.parent();
+			var pos = parent.position();
+
+			return {
+				row : row,
+				column : col,
+
+				position : {
+					left : pos.left,
+					top : pos.top
+				},
+
+				edges : {
+					right : parent.hasClass('right-edge'),
+					bottom : parent.hasClass('bottom-edge')
+				}
+			};
 		}
 	};
 
@@ -147,13 +170,15 @@ ryuryu.editOverlay = function(boardDisplay) {
 
 	function init() {
 		var board = boardDisplay.board();
-		
+
 		for (var row = 0; row < board.size(); row++) {
 			for (var col = 0; col < board.size(); col++) {
+				var info = boardDisplay.squareInfo(row + 1, col + 1);
+
 				if (col < board.size() - 1)
-					addRightEdge(row + 1, col + 1);
+					addRightEdge(info);
 				if (row < board.size() - 1)
-					addBottomEdge(row + 1, col + 1);
+					addBottomEdge(info);
 			}
 		}
 
@@ -163,14 +188,40 @@ ryuryu.editOverlay = function(boardDisplay) {
 		$('body').append(overlay);
 	}
 
-	function addRightEdge(row, col) {
-		overlay.append($('<div/>').addClass('overlay-right-edge').css({left:(80 * col - 5), top:((row-1) *80)}));
+	function addRightEdge(squareInfo) {
+		var edge = createEdge('overlay-right-edge', squareInfo.position.top, squareInfo.position.left + 75);
+
+		setDragDropBehavior(edge, squareInfo.edges.right, "x");
 	}
 
-	function addBottomEdge(row, col) {
-		overlay.append($('<div/>').addClass('overlay-bottom-edge').css({top:(80 * row - 5), left:((col-1) *80)}));
+	function addBottomEdge(squareInfo) {
+		var edge = createEdge('overlay-bottom-edge', squareInfo.position.top + 75, squareInfo.position.left);
+
+		setDragDropBehavior(edge, squareInfo.edges.bottom, "y");
 	}
 
+	function createEdge(className, top, left) {
+		var edge = $('<div/>');
+
+		edge.addClass(className);
+		edge.css({
+			left: left,
+			top: top
+		});
+
+		overlay.append(edge);
+
+		return edge;
+	}
+
+	function setDragDropBehavior(edge, isDraggable, axis) {
+		if (isDraggable) {
+			edge.draggable('option', 'axis', axis);
+		}
+		else {
+			edge.droppable();
+		}
+	}
 
 	init();
 	return {
