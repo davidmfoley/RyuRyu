@@ -76,8 +76,8 @@ div.ui-droppable {
 	border: 1px solid blue;	
 }
 
-div.ui-draggable-dragging {
-	background-color: blue;
+div.ui-draggable {
+
 	border: 1px solid purple;	
 }
 

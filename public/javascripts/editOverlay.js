@@ -39,15 +39,29 @@ ryuryu.editOverlay = function(boardDisplay) {
 	}
 
 	function addRightEdge(squareInfo) {
-		var edge = createEdge('overlay-right-edge', squareInfo.position.top, squareInfo.position.left + 75);
+		var edge = createVerticalEdge(squareInfo.row, squareInfo.column, squareInfo.position.top, squareInfo.position.left + 75);
 
 		setDragDropBehavior(edge, squareInfo.edges.right, "x");
 	}
 
-	function addBottomEdge(squareInfo) {
-		var edge = createEdge('overlay-bottom-edge', squareInfo.position.top + 75, squareInfo.position.left);
+	function createVerticalEdge(row, column, top, left) {
+		var edge = createEdge('overlay-right-edge', top, left);
+		edge.data('position', { row : row, column: column});
+		edge.data('orientation', 'vertical');
+		return edge;
+	}
 
+
+	function addBottomEdge(squareInfo) {
+		var edge = createHorizontalEdge(squareInfo.row, squareInfo.column, squareInfo.position.top + 75, squareInfo.position.left);
 		setDragDropBehavior(edge, squareInfo.edges.bottom, "y");
+	}
+
+	function createHorizontalEdge(row, column, top, left)  {
+		var edge = createEdge('overlay-bottom-edge', top, left);
+		edge.data('position', { row : row, column: column});
+		edge.data('orientation', 'horizontal');
+		return edge;
 	}
 
 	function createEdge(className, top, left) {
@@ -59,6 +73,7 @@ ryuryu.editOverlay = function(boardDisplay) {
 			top: top
 		});
 
+
 		overlay.append(edge);
 
 		return edge;
@@ -67,10 +82,9 @@ ryuryu.editOverlay = function(boardDisplay) {
 	function setDragDropBehavior(edge, isDraggable, axis) {
 		if (isDraggable) {
 			edge.draggable('option', 'axis', axis);
+			edge.addClass('ui-draggable');
 		}
-		else {
-			edge.droppable();
-		}
+		edge.droppable();
 	}
 
 	init();

@@ -133,16 +133,20 @@ Screw.Unit(function() {
 						expect("not yet implemented").to(equal, "implemented");
 					});
 
-					it('should have 5 droppable right edges', function() {
-						expect(overlay.wrapper.find(".overlay-right-edge.ui-droppable").length).to(equal, 5);
+					it('should have 6 droppable right edges', function() {
+						expect(overlay.wrapper.find(".overlay-right-edge.ui-droppable").length).to(equal, 6);
 					});
 
 					it('should have 1 draggable right edge', function() {
 						expect(overlay.wrapper.find(".overlay-right-edge.ui-draggable").length).to(equal, 1);
 					});
 
-					it('should have six bottom edges', function() {
-						expect(overlay.wrapper.find(".overlay-bottom-edge.").length).to(equal, 6);
+					it('should have 6 droppable bottom edges', function() {
+						expect(overlay.wrapper.find(".overlay-bottom-edge.ui-droppable").length).to(equal, 6);
+					});
+
+					it('should have 1 draggable bottom edge', function() {
+						expect(overlay.wrapper.find(".overlay-bottom-edge.ui-draggable").length).to(equal, 1);
 					});
 				});
 			});
