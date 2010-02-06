@@ -119,30 +119,33 @@ Screw.Unit(function() {
 			describe('of a 2x2 board', function() {
 
 
-			before(function() {
-				$('#sandbox').html('<div id="board-wrapper"></div>"');
-				board = ryuryu.boardDisplay($('#board-wrapper'));
+				before(function() {
+					$('#sandbox').html('<div id="board-wrapper"></div>"');
+					board = ryuryu.boardDisplay($('#board-wrapper'));
 
-				board.load('{regions:[{squares : [[1,1]],	total : 1,operator : "+"},{	squares : [[1,2],[2,1],[2,2]],total : 4,operator : "*"}]}');
+					board.load('{regions:[{squares : [[1,1]],	total : 1,operator : "+"},{	squares : [[1,2],[2,1],[2,2]],total : 4,operator : "*"}]}');
 
-				overlay = ryuryu.editOverlay(board);
+					overlay = ryuryu.editOverlay(board);
+				});
+
+				describe('overlay edges', function() {
+					it('should be positioned over the board', function() {
+						expect("not yet implemented").to(equal, "implemented");
+					});
+
+					it('should have 5 droppable right edges', function() {
+						expect(overlay.wrapper.find(".overlay-right-edge.ui-droppable").length).to(equal, 5);
+					});
+
+					it('should have 1 draggable right edge', function() {
+						expect(overlay.wrapper.find(".overlay-right-edge.ui-draggable").length).to(equal, 1);
+					});
+
+					it('should have six bottom edges', function() {
+						expect(overlay.wrapper.find(".overlay-bottom-edge.").length).to(equal, 6);
+					});
+				});
 			});
-
-			describe('overlay edges', function() {
-				it('should be positioned over the board', function() {
-					expect("not yet implemented").to(equal, "implemented");
-				});
-
-				it('should have two right edges', function() {
-					expect(overlay.wrapper.find(".overlay-right-edge").length).to(equal, 2);
-				});
-
-
-				it('should have two bottom edges', function() {
-					expect(overlay.wrapper.find(".overlay-bottom-edge").length).to(equal, 2);
-				});
-			});
-				});
 		});
 	});
 });
