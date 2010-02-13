@@ -28,10 +28,11 @@ ryuryu.board = function(json) {
 
 			squares[square] = {
 				info : info,
-				region : jsonRegion
+				region : jsonRegion,
+				position : square
 			};
 
-			region.squares.push(squares[square]);
+			region.squares.push(square);
 			square_count++;
 		}
 
@@ -40,6 +41,19 @@ ryuryu.board = function(json) {
 
 	board_size = Math.sqrt(square_count);
 
+	function findRegionWithSquare(square) {
+		for (var r = 0; r < regions.length; r++) {
+			console.log(regions[r]);
+			console.log(square);
+			for (var s = 0; s < regions[r].squares.length; s++) {
+				var p = regions[r].squares[s];
+				if (p[0] == square[0] && p[1] == square[1])
+					return regions[r];
+			}
+		}
+
+		return undefined;
+	}
 	return {
 		squareAt : function(row, col) {
 			return squares[[row,col]];
@@ -50,9 +64,42 @@ ryuryu.board = function(json) {
 		size : function() {
 			return board_size;
 		},
+		applyEdit : function(edit) {
+
+			var squarePosition = edit.squares[0];
+			var square = squares[squarePosition];
+			var fromRegion = findRegionWithSquare(squarePosition);
+			var toRegion = findRegionWithSquare(edit.addTo);
+			square.region = toRegion;
+			toRegion.squares.push(squarePosition);
+
+			for (var i = 0; i < toRegion.squares.length; i++) {
+				var regionSquare = toRegion.squares[i];
+				this.squareAt(regionSquare[0], regionSquare[1]).region = toRegion;
+			}
+			for (var i = 0; i < fromRegion.squares.length; i++) {
+				var sq = fromRegion.squares[i];
+				if (sq[0] == squarePosition[0] && sq[1] == squarePosition[1]) {
+					fromRegion.squares.splice(i, 1);
+					return;
+				}
+			}
+		},
 		toJson : function() {
+			
+			var regionJson = [];
+
+			for (var i = 0; i < regions.length; i++) {
+
+				var sq = [];
+				for (var s = 0; s < regions[i].squares.length; s++) {
+					sq.push("[" + regions[i].squares[s].join(",") + "]")
+				}
+
+				regionJson.push("{squares:[" +sq.join(",") + "]}");
+			}
 			//temp... once this is editable, this will need to change
-			return data;
+			return "{regions:[" + regionJson.join(",") + " ]}";
 		}
 	};
 };

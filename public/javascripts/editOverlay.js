@@ -86,8 +86,8 @@ ryuryu.editOverlay = function(boardDisplay) {
 			});
 			edge.addClass('ui-draggable');
 		}
+
 		edge.droppable({
-			
 			accept: function(dragged) {
 				return (dragged.draggable('option', 'axis') == axis);
 
@@ -95,7 +95,6 @@ ryuryu.editOverlay = function(boardDisplay) {
 			drop: function() {
 				var edit = {};
 				boardDisplay.board().applyEdit(edit);
-				console.log('triggered');
 			}
 		});
 	}
