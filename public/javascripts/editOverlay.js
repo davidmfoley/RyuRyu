@@ -21,7 +21,7 @@ ryuryu.editOverlay = function(boardDisplay) {
 
 			var leftColumnInfo = boardDisplay.squareInfo(row + 1, 1);
 			var leftEdge = createEdge('overlay-right-edge', leftColumnInfo.position.top, leftColumnInfo.position.left);
-			setDragDropBehavior(leftEdge, false, "y");
+			setDragDropBehavior(leftEdge, false, "x");
 
 		}
 	}
@@ -81,10 +81,23 @@ ryuryu.editOverlay = function(boardDisplay) {
 
 	function setDragDropBehavior(edge, isDraggable, axis) {
 		if (isDraggable) {
-			edge.draggable('option', 'axis', axis);
+			edge.draggable({
+				axis: axis
+			});
 			edge.addClass('ui-draggable');
 		}
-		edge.droppable();
+		edge.droppable({
+			
+			accept: function(dragged) {
+				return (dragged.draggable('option', 'axis') == axis);
+
+			},
+			drop: function() {
+				var edit = {};
+				boardDisplay.board().applyEdit(edit);
+				console.log('triggered');
+			}
+		});
 	}
 
 	init();
