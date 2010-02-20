@@ -31,7 +31,6 @@ Screw.Unit(function() {
 			});
 		});
 
-
 		describe('for a 2x2 board', function() {
 			var boardDisplay;
 			before(function() {

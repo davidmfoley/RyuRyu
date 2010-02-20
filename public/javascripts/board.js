@@ -54,6 +54,16 @@ ryuryu.board = function(json) {
 
 		return undefined;
 	}
+
+	function removeFromRegion(fromRegion, squarePosition) {
+		for (var i = 0; i < fromRegion.squares.length; i++) {
+				var sq = fromRegion.squares[i];
+				if (sq[0] == squarePosition[0] && sq[1] == squarePosition[1]) {
+					fromRegion.squares.splice(i, 1);
+					return;
+				}
+			}
+	}
 	return {
 		squareAt : function(row, col) {
 			return squares[[row,col]];
@@ -64,27 +74,31 @@ ryuryu.board = function(json) {
 		size : function() {
 			return board_size;
 		},
+		
 		applyEdit : function(edit) {
 
-			var squarePosition = edit.squares[0];
-			var square = squares[squarePosition];
-			var fromRegion = findRegionWithSquare(squarePosition);
-			var toRegion = findRegionWithSquare(edit.addTo);
-			square.region = toRegion;
-			toRegion.squares.push(squarePosition);
+			for (var editSquareIndex = 0; editSquareIndex < edit.squares.length; editSquareIndex++) {
 
-			for (var i = 0; i < toRegion.squares.length; i++) {
-				var regionSquare = toRegion.squares[i];
-				this.squareAt(regionSquare[0], regionSquare[1]).region = toRegion;
-			}
-			for (var i = 0; i < fromRegion.squares.length; i++) {
-				var sq = fromRegion.squares[i];
-				if (sq[0] == squarePosition[0] && sq[1] == squarePosition[1]) {
-					fromRegion.squares.splice(i, 1);
-					return;
+				var squarePosition = edit.squares[editSquareIndex];
+				var square = squares[squarePosition];
+				var fromRegion = findRegionWithSquare(squarePosition);
+				var toRegion = findRegionWithSquare(edit.addTo);
+				square.region = toRegion;
+
+				toRegion.squares.push(squarePosition);
+
+				for (var i = 0; i < toRegion.squares.length; i++) {
+					var regionSquare = toRegion.squares[i];
+					this.squareAt(regionSquare[0], regionSquare[1]).region = toRegion;
 				}
+
+				removeFromRegion(fromRegion, squarePosition);
 			}
+
+			if (this.onUpdate)
+				this.onUpdate();
 		},
+
 		toJson : function() {
 			
 			var regionJson = [];
@@ -92,11 +106,12 @@ ryuryu.board = function(json) {
 			for (var i = 0; i < regions.length; i++) {
 
 				var sq = [];
-				for (var s = 0; s < regions[i].squares.length; s++) {
-					sq.push("[" + regions[i].squares[s].join(",") + "]")
+				var currentRegion = regions[i];
+				for (var s = 0; s < currentRegion.squares.length; s++) {
+					sq.push("[" + currentRegion.squares[s].join(",") + "]")
 				}
 
-				regionJson.push("{squares:[" +sq.join(",") + "]}");
+				regionJson.push("{squares:[" +sq.join(",") + "], total: " + currentRegion.total + "}");
 			}
 			//temp... once this is editable, this will need to change
 			return "{regions:[" + regionJson.join(",") + " ]}";

@@ -6,6 +6,10 @@ ryuryu.boardDisplay = function(element) {
 	return {
 		load : function(json) {
 			board = ryuryu.board(json);
+
+			board.onUpdate = function () {
+				buildMarkup();
+			};
 			buildMarkup();
 		},
 
@@ -62,22 +66,33 @@ ryuryu.boardDisplay = function(element) {
 		}
 	};
 
+
 	function buildMarkup() {
 		var squareMarkup = "<div class='board-wrapper'> <table>";
 
-		for (var row = 1; row <= board.size(); row++) {
-			squareMarkup += "<tr>";
-			for (var col = 1; col <= board.size(); col++) {
-				var s = board.squareAt(row, col);
+		for (var row = 1; row <= board.size(); row++)
+			squareMarkup += buildRowMarkup(row);
 
-				squareMarkup += "<td class='" + getSquareClasses(s, row, col) + "'><div class='square'><div class='region-info'>" + s.info + "</div></div></td>";
-			}
-			squareMarkup += "</tr>"
-		}
-		squareMarkup += "</table></div";
+		squareMarkup += "</table></div>";
 
 		wrapper.html(squareMarkup);
 	}
+
+	function buildRowMarkup(row) {
+		var rowMarkup = "<tr>";
+
+		for (var col = 1; col <= board.size(); col++)
+			rowMarkup += buildSquareMarkup(row, col);
+
+		rowMarkup += "</tr>";
+		return rowMarkup;
+	}
+
+	function buildSquareMarkup(row, col) {
+		var s = board.squareAt(row, col);
+ 
+		return "<td class='" + getSquareClasses(s, row, col) + "'><div class='square'><div class='region-info'>" + s.info + "</div></div></td>";
+	}	
 
 	function getSquareClasses(square, row, col) {
 		var hasRightNeighbor = false, hasBottomNeigbor = false;
