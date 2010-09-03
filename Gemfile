@@ -1,0 +1,5 @@
+source "http://rubygems.org"
+gem "rails", "2.3.4"
+gem "rspec"
+gem "rspec-rails"
+gem "json"
