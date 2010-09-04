@@ -1,5 +1,4 @@
 ryuryu.board = function(json) {
-	var data = json;
 	var squares = {};
 	var jsonRegions = eval("(" + json + ")").regions;
 	var regions = [];
@@ -43,8 +42,6 @@ ryuryu.board = function(json) {
 
 	function findRegionWithSquare(square) {
 		for (var r = 0; r < regions.length; r++) {
-			console.log(regions[r]);
-			console.log(square);
 			for (var s = 0; s < regions[r].squares.length; s++) {
 				var p = regions[r].squares[s];
 				if (p[0] == square[0] && p[1] == square[1])
@@ -57,13 +54,14 @@ ryuryu.board = function(json) {
 
 	function removeFromRegion(fromRegion, squarePosition) {
 		for (var i = 0; i < fromRegion.squares.length; i++) {
-				var sq = fromRegion.squares[i];
-				if (sq[0] == squarePosition[0] && sq[1] == squarePosition[1]) {
-					fromRegion.squares.splice(i, 1);
-					return;
-				}
+			var sq = fromRegion.squares[i];
+			if (sq[0] == squarePosition[0] && sq[1] == squarePosition[1]) {
+				fromRegion.squares.splice(i, 1);
+				return;
 			}
+		}
 	}
+
 	return {
 		squareAt : function(row, col) {
 			return squares[[row,col]];
@@ -74,7 +72,7 @@ ryuryu.board = function(json) {
 		size : function() {
 			return board_size;
 		},
-		
+
 		applyEdit : function(edit) {
 
 			for (var editSquareIndex = 0; editSquareIndex < edit.squares.length; editSquareIndex++) {
@@ -100,7 +98,7 @@ ryuryu.board = function(json) {
 		},
 
 		toJson : function() {
-			
+
 			var regionJson = [];
 
 			for (var i = 0; i < regions.length; i++) {
@@ -111,7 +109,7 @@ ryuryu.board = function(json) {
 					sq.push("[" + currentRegion.squares[s].join(",") + "]")
 				}
 
-				regionJson.push("{squares:[" +sq.join(",") + "], total: " + currentRegion.total + "}");
+				regionJson.push("{squares:[" + sq.join(",") + "], total: " + currentRegion.total + ", operator: '" + currentRegion.operator + "'}");
 			}
 			//temp... once this is editable, this will need to change
 			return "{regions:[" + regionJson.join(",") + " ]}";

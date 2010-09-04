@@ -1,4 +1,4 @@
-ryuryu.editOverlay = function(boardDisplay) {
+ryuryu.editOverlay = function(boardDisplay, dropHandler) {
 	var overlay = $('<div class="edit-overlay"/>');
 
 	function addBottomAndRightEdges(board) {
@@ -82,19 +82,25 @@ ryuryu.editOverlay = function(boardDisplay) {
 	function setDragDropBehavior(edge, isDraggable, axis) {
 		if (isDraggable) {
 			edge.draggable({
-				axis: axis
+				axis: axis,
+				drag : function() {
+					debugger;
+					ryuryu.editOverlay.currentlyDragging = edge;
+				}
 			});
 			edge.addClass('ui-draggable');
 		}
 
 		edge.droppable({
-			accept: function(dragged) {
+			accept: function(dragged) {	
 				return (dragged.draggable('option', 'axis') == axis);
-
+				
 			},
 			drop: function() {
-				var edit = {};
-				boardDisplay.board().applyEdit(edit);
+				debugger;
+				var dragged = ryuryu.editOverlay.currentlyDragging.data('position');
+				var dropped = edge.data('position');
+				dropHandler.applyDragDrop(dragged, dropped);				
 			}
 		});
 	}

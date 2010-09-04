@@ -12,7 +12,7 @@ Screw.Unit(function() {
 
 		describe('serializing to json', function() {
 			var jsonEvaled;
-			
+
 			before(function() {
 				initBoard();
 				jsonEvaled = eval(board.toJson());
@@ -20,16 +20,45 @@ Screw.Unit(function() {
 
 			it('should have two regions', function() {
 				expect(jsonEvaled.length).to(equal, 2);
-				
 			});
 
-			it('should have the total', function() {
-				expect(jsonEvaled[0].total).to(equal, 1);
+			describe('1st region', function() {
+				it('should have the total', function() {
+					expect(jsonEvaled[0].total).to(equal, 1);
+				});
+
+				it('should have the operator', function() {
+					expect(jsonEvaled[0].operator).to(equal, "+");
+				});
+
 			});
 
-			it('should have the total', function() {
-				expect(jsonEvaled[1].total).to(equal, 4);
+			describe('2nd region', function() {
+				it('should have the total', function() {
+					expect(jsonEvaled[1].total).to(equal, 4);
+				});
+
+				it('should have the operator', function() {
+					expect(jsonEvaled[1].operator).to(equal, "*");
+				});
 			});
+
+			describe('round-trip json serialize/construct', function() {
+				var constructed;
+
+				before(function() {
+					constructed = ryuryu.board(board.toJson());
+				});
+
+				it('should return something', function() {
+					expect(constructed).to_not(equal, null);
+				});
+
+				it('re-de-serializing should match', function() {
+					expect(constructed.toJson()).to(equal, board.toJson());
+				});
+			});
+
 		});
 
 		describe('applying edits', function() {
@@ -107,8 +136,6 @@ Screw.Unit(function() {
 					expect(regions[1].squares.length).to(equal, 1);
 				});
 			});
-
-
 		});
 	});
 });

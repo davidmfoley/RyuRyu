@@ -4,6 +4,8 @@ Screw.Unit(function() {
 			var overlay;
 			var boardDisplay;
 			var edit;
+			var dropHandler;
+
 			describe('of a 2x2 board', function() {
 
 				before(function() {
@@ -16,7 +18,16 @@ Screw.Unit(function() {
 					boardDisplay.board().applyEdit = function(e) {
 						edit = e;
 					};
-					overlay = ryuryu.editOverlay(boardDisplay);
+
+					dropHandler = {
+						applyDragDrop : function(dragged, dropped) {
+							dropHandler.dragged = dragged;
+							dropHandler.dropped = dropped;
+							dropHandler.wasCalled = true;
+						},
+						wasCalled : false
+					};
+					overlay = ryuryu.editOverlay(boardDisplay, dropHandler);
 				});
 
 				describe('overlay edges', function() {
@@ -44,6 +55,7 @@ Screw.Unit(function() {
 					function dropOn(node) {
 						node = $(node);
 
+
 						// a bit cheesy... or more than a little bit
 						if (node.droppable('option', 'accept')(dragEdge))
 							node.droppable('option', 'drop').call([
@@ -54,6 +66,9 @@ Screw.Unit(function() {
 
 					before(function() {
 						dragEdge = $('.overlay-bottom-edge.ui-draggable').eq(0);
+						dragEdge.draggable('option', 'drag').call([
+
+						]);
 					});
 
 					describe('onto a vertical edge', function() {
@@ -61,7 +76,7 @@ Screw.Unit(function() {
 							dropOn($('.overlay-right-edge').eq(0));
 						});
 						it('should not have an effect', function() {
-							expect(edit).to(equal, null);
+							expect(dropHandler.wasCalled).to(equal, false);
 						});
 					});
 
@@ -71,7 +86,10 @@ Screw.Unit(function() {
 						});
 
 						it('should edit the board definition', function() {
-							expect(!!edit).to(equal, true);
+							expect(dropHandler.wasCalled).to(equal, true);
+						});
+						it('should have the correct squares', function() {
+							
 						});
 					});
 				});
