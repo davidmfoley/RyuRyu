@@ -22,4 +22,5 @@ class TestData
 		}
 		Board.new(test_boards[key])
 	end
+
 end

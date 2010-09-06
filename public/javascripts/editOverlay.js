@@ -1,4 +1,6 @@
-ryuryu.editOverlay = function(boardDisplay, dropHandler) {
+ryuryu.editOverlay = function(boardDisplay, dragDropHandler) {
+	var dropHandler = dragDropHandler || ryuryu.dropHandler(boardDisplay.board());
+
 	var overlay = $('<div class="edit-overlay"/>');
 
 	function addBottomAndRightEdges(board) {
@@ -17,10 +19,14 @@ ryuryu.editOverlay = function(boardDisplay, dropHandler) {
 			var topRowInfo = boardDisplay.squareInfo(1, row + 1);
 
 			var topEdge = createEdge('overlay-bottom-edge', topRowInfo.position.top, topRowInfo.position.left);
+			topEdge.data('position', { row : 0, column: row, orientation: 'horizontal'});
+
 			setDragDropBehavior(topEdge, false, "y");
 
 			var leftColumnInfo = boardDisplay.squareInfo(row + 1, 1);
 			var leftEdge = createEdge('overlay-right-edge', leftColumnInfo.position.top, leftColumnInfo.position.left);
+			leftEdge.data('position', { row : row, column: 0, orientation: 'vertical'});
+						
 			setDragDropBehavior(leftEdge, false, "x");
 
 		}
@@ -46,8 +52,8 @@ ryuryu.editOverlay = function(boardDisplay, dropHandler) {
 
 	function createVerticalEdge(row, column, top, left) {
 		var edge = createEdge('overlay-right-edge', top, left);
-		edge.data('position', { row : row, column: column});
-		edge.data('orientation', 'vertical');
+		edge.data('position', { row : row, column: column, orientation: 'vertical'});
+
 		return edge;
 	}
 
@@ -59,8 +65,7 @@ ryuryu.editOverlay = function(boardDisplay, dropHandler) {
 
 	function createHorizontalEdge(row, column, top, left)  {
 		var edge = createEdge('overlay-bottom-edge', top, left);
-		edge.data('position', { row : row, column: column});
-		edge.data('orientation', 'horizontal');
+		edge.data('position', { row : row, column: column, orientation: 'horizontal'});
 		return edge;
 	}
 
@@ -84,7 +89,6 @@ ryuryu.editOverlay = function(boardDisplay, dropHandler) {
 			edge.draggable({
 				axis: axis,
 				drag : function() {
-					debugger;
 					ryuryu.editOverlay.currentlyDragging = edge;
 				}
 			});
@@ -92,12 +96,18 @@ ryuryu.editOverlay = function(boardDisplay, dropHandler) {
 		}
 
 		edge.droppable({
-			accept: function(dragged) {	
-				return (dragged.draggable('option', 'axis') == axis);
-				
+			accept: function(dragged) {
+				if (dragged.draggable('option', 'axis') != axis)
+					return false;
+
+				var position = dragged.data('position');
+				var myPosition = edge.data('position');
+				if (axis == 'y')
+					return position.column == myPosition.column;
+
+				return position.row == myPosition.row;
 			},
 			drop: function() {
-				debugger;
 				var dragged = ryuryu.editOverlay.currentlyDragging.data('position');
 				var dropped = edge.data('position');
 				dropHandler.applyDragDrop(dragged, dropped);				
@@ -108,5 +118,50 @@ ryuryu.editOverlay = function(boardDisplay, dropHandler) {
 	init();
 	return {
 		wrapper : overlay
+	};
+};
+
+ryuryu.dropHandler = function(board) {
+
+	return {
+		applyDragDrop: function (dragged, dropped) {
+			console.log(dragged);
+			console.log(dropped);
+
+			var squares =[];
+			var addTo = [];
+			var i;
+
+			if (dropped.row > dragged.row) {
+				for (i = dragged.row +1; i <= dropped.row; i++) {
+					squares.push([i, dragged.column]);
+				}
+				addTo = [dragged.row, dragged.column];
+			}
+			else if (dropped.row < dragged.row) {
+				for (i = dropped.row + 1 ; i < dragged.row + 1; i++) {
+					squares.push([i, dragged.column]);
+				}
+				addTo = [dragged.row + 1, dragged.column];
+			}
+			else if (dropped.column > dragged.column) {
+				for (i = dragged.column +1; i <= dropped.column; i++) {
+					squares.push([dragged.row, i]);
+				}
+				addTo = [dragged.row, dragged.column];
+			}
+			else if (dropped.column < dragged.column) {
+				for (i = dropped.column + 1; i < dragged.column + 1; i++) {
+					squares.push([dragged.row, i]);
+				}
+				addTo = [dragged.row, dragged.column + 1];
+			}
+
+			var edit = {
+				squares : squares,
+				addTo : addTo
+			};
+			board.applyEdit(edit);
+		}
 	};
 };

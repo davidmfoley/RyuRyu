@@ -87,10 +87,7 @@ Screw.Unit(function() {
 
 						it('should edit the board definition', function() {
 							expect(dropHandler.wasCalled).to(equal, true);
-						});
-						it('should have the correct squares', function() {
-							
-						});
+						});						
 					});
 				});
 			});

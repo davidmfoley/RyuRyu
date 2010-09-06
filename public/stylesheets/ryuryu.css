@@ -68,19 +68,11 @@
 	background: transparent;
 }
 
-.edit-overlay div {
-	border: 1px solid red; /* debug */
-}
-
-div.ui-droppable { 
-	border: 1px solid blue;	
-}
 
 div.ui-draggable {
-
-	border: 1px solid purple;
 	position:absolute!important;
 }
+
 
 .overlay-right-edge {
 	height: 80px;

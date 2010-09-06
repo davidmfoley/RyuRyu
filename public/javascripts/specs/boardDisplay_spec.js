@@ -69,7 +69,7 @@ Screw.Unit(function() {
 				var jsonResult;
 
 				before(function() {
-					jsonResult = eval(boardDisplay.board().toJson());
+					jsonResult = eval('(' + boardDisplay.board().toJson()+')').regions;
 				});
 
 				it('should have two regions', function() {

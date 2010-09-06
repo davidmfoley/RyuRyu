@@ -93,6 +93,21 @@ ryuryu.board = function(json) {
 				removeFromRegion(fromRegion, squarePosition);
 			}
 
+			for (var i = regions.length -1; i >= 0; i--) {
+				if (regions[i].squares.length == 0)
+					regions.splice(i,1)
+				else {
+					for (var s = 0; s < regions[i].squares.length; s++) {
+						var sq = regions[i].squares[s];
+
+						if (s == 0)
+							sq.info = regions[i].total + regions[i].operator;
+						else
+							sq.info = "";
+					}
+				}
+			}
+
 			if (this.onUpdate)
 				this.onUpdate();
 		},
@@ -109,10 +124,13 @@ ryuryu.board = function(json) {
 					sq.push("[" + currentRegion.squares[s].join(",") + "]")
 				}
 
-				regionJson.push("{squares:[" + sq.join(",") + "], total: " + currentRegion.total + ", operator: '" + currentRegion.operator + "'}");
+				regionJson.push("{\"squares\":[" + sq.join(",") + "], \"total\": " + currentRegion.total + ", \"operator\": \"" + currentRegion.operator + "\"}");
 			}
 			//temp... once this is editable, this will need to change
-			return "{regions:[" + regionJson.join(",") + " ]}";
+			var json = "{\"regions\":[" + regionJson.join(",") + " ]}";
+
+			console.log(json);
+			return json;
 		}
 	};
 };

@@ -10,12 +10,15 @@ Screw.Unit(function() {
 			}
 		};
 
+		function evalJson(json) {
+			return eval('(' + json + ')');
+		}
 		describe('serializing to json', function() {
 			var jsonEvaled;
 
 			before(function() {
-				initBoard();
-				jsonEvaled = eval(board.toJson());
+				initBoard();				
+				jsonEvaled = evalJson(board.toJson()).regions;
 			});
 
 			it('should have two regions', function() {
@@ -87,7 +90,7 @@ Screw.Unit(function() {
 
 				it('should update the json', function() {
 					var json = board.toJson();
-					var regions = eval(json);
+					var regions = evalJson(json).regions;
 					expect(regions[0].squares.length).to(equal, 2);
 					expect(regions[1].squares.length).to(equal, 2);
 				});
@@ -131,9 +134,22 @@ Screw.Unit(function() {
 
 				it('should update the json', function() {
 					var json = board.toJson();
-					var regions = eval(json);
+					var regions = evalJson(json).regions;
 					expect(regions[0].squares.length).to(equal, 3);
 					expect(regions[1].squares.length).to(equal, 1);
+				});
+			});
+			describe('moving multiple squares from one region to another', function() {
+				before(function() {
+					initBoard();
+					board.applyEdit({squares :[
+						[1,1]
+					], addTo:[1,2]});
+				});
+
+				it('should remove the empty region', function() {
+					expect(board.regions().length).to(equal, 1);
+					
 				});
 			});
 		});

@@ -23,6 +23,7 @@ describe "serializing boards to JSON" do
 	def round_trip_test board
 		serializer = JsonSerializer.new
 		serialized = serializer.serialize board
+		puts serialized
 		result = serializer.deserialize(serialized)
 		result.regions.each_index do |i|
 			result.regions[i].squares.should == board.regions[i].squares
@@ -30,5 +31,16 @@ describe "serializing boards to JSON" do
 			result.regions[i].operator.should == board.regions[i].operator
 
 		end
+	end
+end
+
+describe "deserializing JSON boards" do
+	it "should handle example posted JSON" do
+#		example = """({'regions' : [{'squares':[[1,1],[2,1]], 'total': 3, 'operator': '+'},{'squares':[[1,2],[2,2]], 'total': 4, 'operator': '+'},{'squares':[[1,3]], 'total': 3, 'operator': ' '},{'squares':[[3,1],[3,2]], 'total': 5, 'operator': '+'},{'squares':[[2,3],[3,3]], 'total': 3, 'operator': '+'} ]}) """
+		example = "({foo : \"bar\"})"
+
+		serializer = JsonSerializer.new
+		board = serializer.deserialize(example)
+		
 	end
 end
