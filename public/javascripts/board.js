@@ -79,16 +79,6 @@ ryuryu.board = function(json) {
 		removeFromRegion(fromRegion, squarePosition);
 	}
 
-	function setRegionInfo(r) {
-		for (var s = 0; s < r.squares.length; s++) {
-			var sq = r.squares[s];
-
-			if (s == 0)
-				sq.info = r.total + r.operator;
-			else
-				sq.info = "";
-		}
-	}
 
 	function moveSquares(edit) {
 		for (var editSquareIndex = 0; editSquareIndex < edit.squares.length; editSquareIndex++) {
@@ -105,6 +95,13 @@ ryuryu.board = function(json) {
 			else
 				setRegionInfo(regions[i]);
 		}
+	}
+
+	function setRegionInfo(r) {
+		r.squares[0].info = r.total + r.operator;
+		
+		for (var s = 1; s < r.squares.length; s++)
+			r.squares[s].info = "";
 	}
 
 	return {
