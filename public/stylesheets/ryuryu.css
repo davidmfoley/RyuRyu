@@ -74,6 +74,17 @@ div.ui-draggable {
 }
 
 
+div.ui-draggable {
+	position:absolute!important;
+	border:1px solid blue;
+}
+
+
+div.ui-droppableable {
+	position:absolute!important;
+	border:1px solid red;
+}
+
 .overlay-right-edge {
 	height: 80px;
 	width: 10px;

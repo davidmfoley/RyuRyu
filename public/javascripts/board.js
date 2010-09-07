@@ -62,6 +62,34 @@ ryuryu.board = function(json) {
 		}
 	}
 
+	function moveSquareToRegion(squarePosition, toRegion) {
+
+		var square = squares[squarePosition];
+		var fromRegion = findRegionWithSquare(squarePosition);
+
+		square.region = toRegion;
+
+		toRegion.squares.push(squarePosition);
+
+		for (var i = 0; i < toRegion.squares.length; i++) {
+			var regionSquare = toRegion.squares[i];
+			squares[[regionSquare[0], regionSquare[1]]].region = toRegion;
+		}
+
+		removeFromRegion(fromRegion, squarePosition);
+	}
+
+	function setRegionInfo(r) {
+		for (var s = 0; s < r.squares.length; s++) {
+			var sq = r.squares[s];
+
+			if (s == 0)
+				sq.info = r.total + r.operator;
+			else
+				sq.info = "";
+		}
+	}
+
 	return {
 		squareAt : function(row, col) {
 			return squares[[row,col]];
@@ -76,36 +104,16 @@ ryuryu.board = function(json) {
 		applyEdit : function(edit) {
 
 			for (var editSquareIndex = 0; editSquareIndex < edit.squares.length; editSquareIndex++) {
-
 				var squarePosition = edit.squares[editSquareIndex];
-				var square = squares[squarePosition];
-				var fromRegion = findRegionWithSquare(squarePosition);
 				var toRegion = findRegionWithSquare(edit.addTo);
-				square.region = toRegion;
-
-				toRegion.squares.push(squarePosition);
-
-				for (var i = 0; i < toRegion.squares.length; i++) {
-					var regionSquare = toRegion.squares[i];
-					this.squareAt(regionSquare[0], regionSquare[1]).region = toRegion;
-				}
-
-				removeFromRegion(fromRegion, squarePosition);
+				moveSquareToRegion(squarePosition, toRegion);
 			}
 
 			for (var i = regions.length -1; i >= 0; i--) {
 				if (regions[i].squares.length == 0)
-					regions.splice(i,1)
-				else {
-					for (var s = 0; s < regions[i].squares.length; s++) {
-						var sq = regions[i].squares[s];
-
-						if (s == 0)
-							sq.info = regions[i].total + regions[i].operator;
-						else
-							sq.info = "";
-					}
-				}
+					regions.splice(i,1);
+				else
+					setRegionInfo(regions[i]);
 			}
 
 			if (this.onUpdate)
