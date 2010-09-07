@@ -1,45 +1,51 @@
+
 ryuryu.board = function(json) {
 	var squares = {};
-	var jsonRegions = eval("(" + json + ")").regions;
+
 	var regions = [];
 
 	var square_count = 0;
 	var board_size;
 
 
-	for (var i = 0; i < jsonRegions.length; i++) {
-		var jsonRegion = jsonRegions[i];
-		var region = {
-			squares : [],
-			total : jsonRegion.total,
-			operator : jsonRegion.operator
-		};
+	initFromJson(json);
 
-		for (var j = 0; j < jsonRegion.squares.length; j++) {
+	function initFromJson(json) {
+		var jsonRegions = eval("(" + json + ")").regions;
 
-			var square = jsonRegion.squares[j];
-			var info;
-
-			if (j == 0)
-				info = '' + jsonRegion.total + jsonRegion.operator;
-			else
-				info = "";
-
-			squares[square] = {
-				info : info,
-				region : jsonRegion,
-				position : square
+		for (var i = 0; i < jsonRegions.length; i++) {
+			var jsonRegion = jsonRegions[i];
+			var region = {
+				squares : [],
+				total : jsonRegion.total,
+				operator : jsonRegion.operator
 			};
 
-			region.squares.push(square);
-			square_count++;
+			for (var j = 0; j < jsonRegion.squares.length; j++) {
+				var square = jsonRegion.squares[j];
+				region.squares.push(square);
+
+				var info;
+
+				if (j == 0)
+					info = '' + jsonRegion.total + jsonRegion.operator;
+				else
+					info = "";
+
+				squares[square] = {
+					info : info,
+					region : jsonRegion,
+					position : square
+				};
+			}
+			regions.push(region);
+
+			square_count += region.squares.length;
 		}
 
-		regions.push(region);
+		board_size = Math.sqrt(square_count);
 	}
-
-	board_size = Math.sqrt(square_count);
-
+	
 	function findRegionWithSquare(square) {
 		for (var r = 0; r < regions.length; r++) {
 			for (var s = 0; s < regions[r].squares.length; s++) {
@@ -52,33 +58,34 @@ ryuryu.board = function(json) {
 		return undefined;
 	}
 
-	function removeFromRegion(fromRegion, squarePosition) {
-		for (var i = 0; i < fromRegion.squares.length; i++) {
-			var sq = fromRegion.squares[i];
-			if (sq[0] == squarePosition[0] && sq[1] == squarePosition[1]) {
-				fromRegion.squares.splice(i, 1);
-				return;
-			}
-		}
-	}
-
 	function moveSquareToRegion(squarePosition, toRegion) {
-
-		var square = squares[squarePosition];
+		squares[squarePosition].region = toRegion;
 		var fromRegion = findRegionWithSquare(squarePosition);
 
-		square.region = toRegion;
+		addToRegion(toRegion, squarePosition);
+	
+		removeFromRegion(fromRegion, squarePosition);
+	}
 
+	function addToRegion(toRegion, squarePosition) {
 		toRegion.squares.push(squarePosition);
 
 		for (var i = 0; i < toRegion.squares.length; i++) {
 			var regionSquare = toRegion.squares[i];
 			squares[[regionSquare[0], regionSquare[1]]].region = toRegion;
 		}
-
-		removeFromRegion(fromRegion, squarePosition);
 	}
+	
+	function removeFromRegion(fromRegion, squarePosition) {
+		for (var i = 0; i < fromRegion.squares.length; i++) {
+			var sq = fromRegion.squares[i];
 
+			if (sq[0] == squarePosition[0] && sq[1] == squarePosition[1]) {
+				fromRegion.squares.splice(i, 1);
+				return;
+			}
+		}
+	}
 
 	function moveSquares(edit) {
 		for (var editSquareIndex = 0; editSquareIndex < edit.squares.length; editSquareIndex++) {
@@ -88,14 +95,17 @@ ryuryu.board = function(json) {
 		}
 	}
 
-	function cleanUpRegions() {
-		for (var i = regions.length - 1; i >= 0; i--) {
+	function deleteEmptyRegions() {
+		for (var i = regions.length - 1; i >= 0; i--) 
 			if (regions[i].squares.length == 0)
 				regions.splice(i, 1);
-			else
-				setRegionInfo(regions[i]);
-		}
 	}
+
+	function fixRegionInfoSquares() {
+		for (var i = regions.length - 1; i >= 0; i--)
+			setRegionInfo(regions[i]);
+	}
+
 
 	function setRegionInfo(r) {
 		r.squares[0].info = r.total + r.operator;
@@ -115,14 +125,15 @@ ryuryu.board = function(json) {
 			return board_size;
 		},
 
-		applyEdit : function(edit) {
+		onUpdate : function() {},
 
+		applyEdit : function(edit) {
 			moveSquares(edit);
 
-			cleanUpRegions();
+			deleteEmptyRegions();
+			fixRegionInfoSquares();
 
-			if (this.onUpdate)
-				this.onUpdate();
+			this.onUpdate();
 		},
 
 		toJson : function() {
@@ -131,15 +142,17 @@ ryuryu.board = function(json) {
 
 			for (var i = 0; i < regions.length; i++) {
 
-				var sq = [];
 				var currentRegion = regions[i];
+
+				var sq = [];
 				for (var s = 0; s < currentRegion.squares.length; s++) {
 					sq.push("[" + currentRegion.squares[s].join(",") + "]")
 				}
 
-				regionJson.push("{\"squares\":[" + sq.join(",") + "], \"total\": " + currentRegion.total + ", \"operator\": \"" + currentRegion.operator + "\"}");
+				var regionJsonPiece = "{\"squares\":[" + sq.join(",") + "], \"total\": " + currentRegion.total + ", \"operator\": \"" + currentRegion.operator + "\"}";
+				regionJson.push(regionJsonPiece);
 			}
-			//temp... once this is editable, this will need to change
+
 			var json = "{\"regions\":[" + regionJson.join(",") + " ]}";
 
 			console.log(json);
